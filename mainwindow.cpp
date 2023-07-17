@@ -1,5 +1,5 @@
-#include "gestionVoyage.h"
-#include "ui_gestionVoyage.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "voyage.h"
 #include <QTextDocument>
 #include <QtCharts>
@@ -9,8 +9,8 @@
 #include <QPieSlice>
 #include "mybutton.h"
 
-gestionVoyage::gestionVoyage(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::gestionVoyage)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     int ret = A.connect_arduino(); // lancer la connexion à arduino
@@ -110,12 +110,12 @@ gestionVoyage::gestionVoyage(QWidget *parent)
     timer->start(1000);
 }
 
-gestionVoyage::~gestionVoyage()
+MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void gestionVoyage::on_pushButton_ajouter_clicked()
+void MainWindow::on_pushButton_ajouter_clicked()
 {
     QString flightref = ui->lineEdit_flightref->text();
     QString lieudep = ui->comboBox_lieudep->currentText();
@@ -126,9 +126,7 @@ void gestionVoyage::on_pushButton_ajouter_clicked()
     float montant = ui->lineEdit_montant->text().replace(",", ".", Qt::CaseSensitive).toFloat();
     int nbper = ui->lineEdit_nbper->text().toInt();
     Voyage v(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper);
-    bool test = false;
-    if (v.search(flightref))
-        test = v.ajouter();
+    bool test =  v.ajouter();
     if (test)
     {
         profit();
@@ -144,7 +142,7 @@ void gestionVoyage::on_pushButton_ajouter_clicked()
                               QMessageBox::Cancel);
 }
 //-----------------------------delete button--------------------------------
-void gestionVoyage::on_pushButton_delete_clicked()
+void MainWindow::on_pushButton_delete_clicked()
 {
     QString ref = ui->lineEdit_delete->text();
     bool test = voy.supprimer(ref);
@@ -163,7 +161,7 @@ void gestionVoyage::on_pushButton_delete_clicked()
                               QMessageBox::Cancel);
 }
 //-------------------------------update button---------------------------------
-void gestionVoyage::on_pushButton_update_clicked()
+void MainWindow::on_pushButton_update_clicked()
 {
     QString ref = ui->lineEdit_flightref->text();
     QString flightref = ui->lineEdit_flightref->text();
@@ -191,7 +189,7 @@ void gestionVoyage::on_pushButton_update_clicked()
                               QMessageBox::Cancel);
 }
 
-void gestionVoyage::controle()
+void MainWindow::controle()
 {
     QRegularExpression rx("\\b[a-zA-Z0-9]{1,8}\\b");
     ui->lineEdit_flightref->setValidator(new QRegularExpressionValidator(rx, this));
@@ -200,13 +198,13 @@ void gestionVoyage::controle()
     ui->lineEdit_montant->setValidator(new QDoubleValidator(0, 99999999, 2, this));
 }
 
-void gestionVoyage::on_dateEdit_datedep_userDateChanged(const QDate &date)
+void MainWindow::on_dateEdit_datedep_userDateChanged(const QDate &date)
 {
     ui->dateEdit_datearr->setDate(date);
     ui->dateEdit_datearr->setMinimumDate(date);
 }
 
-void gestionVoyage::on_pushButton_Search_clicked()
+void MainWindow::on_pushButton_Search_clicked()
 {
     if (voy.search(ui->lineEdit_flightref->text()) && !ui->lineEdit_flightref->text().isEmpty())
     {
@@ -227,7 +225,7 @@ void gestionVoyage::on_pushButton_Search_clicked()
                               QMessageBox::Cancel);
 }
 
-void gestionVoyage::on_pushButton_3_clicked()
+void MainWindow::on_pushButton_3_clicked()
 {
     /*
     QPrinter printer;
@@ -293,7 +291,7 @@ void gestionVoyage::on_pushButton_3_clicked()
     QDesktopServices::openUrl(QUrl::fromLocalFile("voyage.pdf"));
 }
 
-void gestionVoyage::charts()
+void MainWindow::charts()
 {
     QHBoxLayout *layout = new QHBoxLayout();
 
@@ -341,7 +339,7 @@ void gestionVoyage::charts()
     ui->widget->layout()->deleteLater();
 }
 
-void gestionVoyage::style()
+void MainWindow::style()
 {
     ui->centralwidget->setStyleSheet("QWidget#tab {"
                                      "background-color:#1F408E;"
@@ -365,7 +363,7 @@ void gestionVoyage::style()
                                      "}");
 }
 
-QList<QLabel *> gestionVoyage::HeadBar()
+QList<QLabel *> MainWindow::HeadBar()
 {
     QList<QLabel *> la = {};
     QStringList s = {
@@ -400,7 +398,7 @@ QList<QLabel *> gestionVoyage::HeadBar()
     return la;
 }
 
-void gestionVoyage::table()
+void MainWindow::table()
 {
     QGridLayout *layout = new QGridLayout();
     QList<Voyage> V = voy.getDatabaseValues();
@@ -438,7 +436,7 @@ void gestionVoyage::table()
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
-void gestionVoyage::controleur_grid(int i, int j, QLineEdit *l, QList<Voyage> V)
+void MainWindow::controleur_grid(int i, int j, QLineEdit *l, QList<Voyage> V)
 {
 
     l->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -460,7 +458,7 @@ void gestionVoyage::controleur_grid(int i, int j, QLineEdit *l, QList<Voyage> V)
         l->setText(QString::number(V[i].getNbper()));
 }
 
-void gestionVoyage::on_pushButton_clear_clicked()
+void MainWindow::on_pushButton_clear_clicked()
 {
     ui->lineEdit_flightref->clear();
     ui->comboBox_lieudep->setCurrentIndex(0);
@@ -472,7 +470,7 @@ void gestionVoyage::on_pushButton_clear_clicked()
     ui->lineEdit_nbper->clear();
 }
 
-void gestionVoyage::on_lineEdit_rechercher_textChanged(const QString &arg1)
+void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
 {
     QList<Voyage> V = voy.getDatabaseValues_recherche(arg1);
 
@@ -530,7 +528,7 @@ void gestionVoyage::on_lineEdit_rechercher_textChanged(const QString &arg1)
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
-void gestionVoyage::on_comboBox_sort_currentTextChanged(const QString &arg1)
+void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
 {
     QGridLayout *layout = new QGridLayout();
     QList<Voyage> V = voy.getDatabaseValues_tri(arg1);
@@ -569,17 +567,17 @@ void gestionVoyage::on_comboBox_sort_currentTextChanged(const QString &arg1)
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
-void gestionVoyage::on_comboBox_lieu_From_currentTextChanged(const QString &arg1)
+void MainWindow::on_comboBox_lieu_From_currentTextChanged(const QString &arg1)
 {
     ui->label_moyen->setText(QString::number(voy.calculerCoutMoyen(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
-void gestionVoyage::on_comboBox_lieu_To_currentTextChanged(const QString &arg1)
+void MainWindow::on_comboBox_lieu_To_currentTextChanged(const QString &arg1)
 {
     ui->label_moyen->setText(QString::number(voy.calculerCoutMoyen(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
-void gestionVoyage::profit()
+void MainWindow::profit()
 {
     QSqlQuery query;
     query.exec("SELECT MONTANT,NBPER FROM VOYAGES");
@@ -598,7 +596,7 @@ void gestionVoyage::profit()
     ui->label_profit->setText(QString::number(earn));
 }
 
-void gestionVoyage::update_label()
+void MainWindow::update_label()
 {
     data = A.read_from_arduino();
     data.remove(0, data.length() - 11);
@@ -614,7 +612,7 @@ void gestionVoyage::update_label()
     }
 }
 
-void gestionVoyage::graphics()
+void MainWindow::graphics()
 {
     QGraphicsScene *scene;
     QGraphicsTextItem *text;

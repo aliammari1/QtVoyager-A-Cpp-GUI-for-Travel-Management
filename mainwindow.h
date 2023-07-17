@@ -1,5 +1,5 @@
-#ifndef gestionVoyage_H
-#define gestionVoyage_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QLabel>
@@ -12,16 +12,16 @@
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
-    class gestionVoyage;
+    class MainWindow;
 }
 QT_END_NAMESPACE
 
-class gestionVoyage : public QMainWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    gestionVoyage(QWidget *parent = nullptr);
-    ~gestionVoyage();
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
     void sorter(QString s);
 
@@ -69,7 +69,7 @@ private slots:
     void update_label();
 
 private:
-    Ui::gestionVoyage *ui;
+    Ui::MainWindow *ui;
     Voyage voy;
     QByteArray data;
     Arduino A;
@@ -77,4 +77,4 @@ private:
     float lineargrady = 1;
 };
 
-#endif // gestionVoyage_H
+#endif // MAINWINDOW_H

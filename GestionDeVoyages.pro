@@ -17,24 +17,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     arduino.cpp \
     connection.cpp \
-    gestionVoyage/gestionVoyage.cpp \
-    gestionVoyage/voyage.cpp \
     main.cpp \
-    mybutton.cpp
+    mainwindow.cpp \
+    mybutton.cpp \
+    voyage.cpp
+
 HEADERS += \
     arduino.h \
     connection.h \
-    gestionVoyage/gestionVoyage.h \
-    gestionVoyage/voyage.h \
+    mainwindow.h \
     mybutton.h \
+    voyage.h
 
+FORMS += \
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-RESOURCES +=
-
-FORMS += \
-    gestionVoyage/gestionVoyage.ui

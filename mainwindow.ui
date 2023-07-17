@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>gestionVoyage</class>
- <widget class="QMainWindow" name="gestionVoyage">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -867,7 +867,7 @@ background-color:rgba(5, 24, 150);
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../../../../Downloads/icons8-pdf-48.png</normaloff>../../../../Downloads/icons8-pdf-48.png</iconset>
+         <normaloff>C:/Users/aliam/Downloads/icons8-pdf-48.png</normaloff>C:/Users/aliam/Downloads/icons8-pdf-48.png</iconset>
        </property>
        <property name="iconSize">
         <size>
