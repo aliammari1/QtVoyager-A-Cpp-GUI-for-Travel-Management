@@ -118,7 +118,7 @@ QList<Voyage> Voyage::getDatabaseValues()
 {
     QList<Voyage> Q = {};
     QSqlQuery query;
-    qDebug() << query.exec("SELECT * FROM VOYAGES");
+    query.exec("SELECT * FROM VOYAGES");
     int size = 0;
     while (query.next())
         size++;
@@ -140,11 +140,12 @@ QList<Voyage> Voyage::getDatabaseValues()
     }
     return Q;
 }
+
 QList<Voyage> Voyage::getDatabaseValues_tri(QString order)
 {
     QList<Voyage> Q = {};
     QSqlQuery query;
-    qDebug() << query.exec("SELECT * FROM VOYAGES ORDER BY " + order);
+    query.exec("SELECT * FROM VOYAGES ORDER BY " + order);
     int size = 0;
     while (query.next())
         size++;
@@ -168,41 +169,25 @@ QList<Voyage> Voyage::getDatabaseValues_tri(QString order)
 }
 QList<Voyage> Voyage::getDatabaseValues_recherche(QString recher)
 {
-    QList<Voyage> Q = {};
+    QList<Voyage> Q;
     QSqlQuery query;
-    qDebug() << query.exec("SELECT * FROM VOYAGES WHERE (FLIGHTREF LIKE '" + recher + "%')"
-                                                                                      "OR(LIEUDEP LIKE '" +
-                           recher + "%')"
-                                    "OR(LIEUARR LIKE '" +
-                           recher + "%')"
-                                    "OR(DATEARR LIKE '" +
-                           recher + "%')"
-                                    "OR(DATEDEP LIKE '" +
-                           recher + "%')"
-                                    "OR(AIRLINE LIKE '" +
-                           recher + "%')"
-                                    "OR(MONTANT LIKE '" +
-                           recher + "%')"
-                                    "OR(NBPER LIKE '" +
-                           recher + "%')");
-    int size = 0;
-    while (query.next())
-        size++;
-    int it = 0;
-    query.first();
-    while (it < size)
+    QString sqlQuery = "SELECT * FROM VOYAGES WHERE FLIGHTREF LIKE :recher OR LIEUDEP LIKE :recher OR LIEUARR LIKE :recher OR DATEARR LIKE :recher OR DATEDEP LIKE :recher OR AIRLINE LIKE :recher OR MONTANT LIKE :recher OR NBPER LIKE :recher";
+    query.prepare(sqlQuery);
+    query.bindValue(":recher", recher + "%");
+    if (query.exec())
     {
-        flightref = query.value(0).toString();
-        lieudep = query.value(1).toString();
-        lieuarr = query.value(2).toString();
-        datedep = query.value(3).toDate();
-        datearr = query.value(4).toDate();
-        airline = query.value(5).toString();
-        montant = query.value(6).toFloat();
-        nbper = query.value(7).toInt();
-        Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
-        query.next();
-        it++;
+        while (query.next())
+        {
+            QString flightref = query.value(0).toString();
+            QString lieudep = query.value(1).toString();
+            QString lieuarr = query.value(2).toString();
+            QDate datedep = query.value(3).toDate();
+            QDate datearr = query.value(4).toDate();
+            QString airline = query.value(5).toString();
+            float montant = query.value(6).toFloat();
+            int nbper = query.value(7).toInt();
+            Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
+        }
     }
     return Q;
 }

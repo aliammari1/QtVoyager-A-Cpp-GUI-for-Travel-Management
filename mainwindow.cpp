@@ -36,36 +36,23 @@ MainWindow::MainWindow(QWidget *parent)
     //---------------initialisation de place de TabWidget------------------------------
     ui->tabWidget->setGeometry(QRect(0, 0, 1600, 1000));
     //---------------setting PushButton initialization color------------------------------
-    ui->pushButton_ajouter->SetColor(QColor(255, 255, 255));
-    ui->pushButton_clear->SetColor(QColor(255, 255, 255));
-    ui->pushButton_update->SetColor(QColor(255, 255, 255));
-    ui->pushButton_Search->SetColor(QColor(255, 255, 255));
-    ui->pushButton_delete->SetColor(QColor(255, 255, 255));
+    for (auto &button : std::array<MyButton *, 5>{ui->pushButton_ajouter, ui->pushButton_clear, ui->pushButton_update, ui->pushButton_Search, ui->pushButton_delete})
+    {
+        button->SetColor(QColor(255, 255, 255));
+    }
     ui->label_moyen->setText(QString::number(voy.calculerCoutMoyen(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
     QTimer *timer = new QTimer();
 
     connect(timer, &QTimer::timeout, [=]()
             {
-        ui->groupBox->setStyleSheet("QGroupBox {"
+        for (auto& groupBox : std::array<QGroupBox*,4>{ui->groupBox, ui->Information_Box, ui->groupBox_2, ui->groupBox_3})
+        {
+            groupBox->setStyleSheet("QGroupBox {"
                                     "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"
                                     "border-radius:20px;"
                                     "color:white;"
                                     "}");
-        lineargradx-=0.001;
-        lineargrady-=0.001;
-
-        if(lineargradx <= 0.8 && lineargrady <= 0.8)
-          {
-            lineargradx = 1;
-            lineargrady = 1;
-        } });
-    connect(timer, &QTimer::timeout, [=]()
-            {
-        ui->Information_Box->setStyleSheet("QGroupBox {"
-                                    "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"
-                                    "border-radius:20px;"
-                                    "color:white;"
-                                    "}");
+        };
 
         lineargradx-=0.001;
         lineargrady-=0.001;
@@ -75,38 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
             lineargradx = 1;
             lineargrady = 1;
         } });
-    connect(timer, &QTimer::timeout, [=]()
-            {
-        ui->groupBox_2->setStyleSheet("QGroupBox {"
-                                    "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"
-                                    "border-radius:20px;"
-                                    "color:white;"
-                                    "}");
 
-        lineargradx-=0.001;
-        lineargrady-=0.001;
-
-        if(lineargradx <= 0.8 && lineargrady <= 0.8)
-        {
-            lineargradx = 1;
-            lineargrady = 1;
-        } });
-    connect(timer, &QTimer::timeout, [=]()
-            {
-        ui->groupBox_3->setStyleSheet("QGroupBox {"
-                                    "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"
-                                    "border-radius:20px;"
-                                    "color:white;"
-                                    "}");
-
-        lineargradx-=0.001;
-        lineargrady-=0.001;
-
-        if(lineargradx <= 0.8 && lineargrady <= 0.8)
-        {
-            lineargradx = 1;
-            lineargrady = 1;
-        } });
     timer->start(1000);
 }
 
@@ -126,7 +82,7 @@ void MainWindow::on_pushButton_ajouter_clicked()
     float montant = ui->lineEdit_montant->text().replace(",", ".", Qt::CaseSensitive).toFloat();
     int nbper = ui->lineEdit_nbper->text().toInt();
     Voyage v(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper);
-    bool test =  v.ajouter();
+    bool test = v.ajouter();
     if (test)
     {
         profit();
