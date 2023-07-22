@@ -8,6 +8,12 @@
 #include "voyage.h"
 #include <QGridLayout>
 #include "arduino.h"
+#include <QTextDocument>
+#include <QtCharts>
+#include <QChartView>
+#include <QLineSeries>
+#include <QPieSeries>
+#include <QPieSlice>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -33,12 +39,9 @@ public:
 
     void rotate();
 
-    QList<QLabel *> HeadBar();
+    QList<QLabel *> createHeadBar();
 
     void table();
-
-    void controleur_grid(int i, int j, QLineEdit *l, QList<Voyage> V);
-
     void rechercher();
     void profit();
     void graphics();

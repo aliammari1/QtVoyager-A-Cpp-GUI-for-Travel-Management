@@ -1,12 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "voyage.h"
-#include <QTextDocument>
-#include <QtCharts>
-#include <QChartView>
-#include <QLineSeries>
-#include <QPieSeries>
-#include <QPieSlice>
 #include "mybutton.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -319,99 +312,96 @@ void MainWindow::style()
                                      "}");
 }
 
-QList<QLabel *> MainWindow::HeadBar()
+QList<QLabel *> MainWindow::createHeadBar()
 {
-    QList<QLabel *> la = {};
-    QStringList s = {
-        "flightref", "lieudep", "lieuarr", "datedep", "datearr", "airline", "montant", "nbper"};
-
-    int x = 120;
-    int y = 0;
-    for (int j = 0; j < 8; j++)
+    QStringList labels = {"flightref", "lieudep", "lieuarr", "datedep", "datearr", "airline", "montant", "nbper"};
+    QList<QLabel *> headerLabels;
+    for (int i = 0; i < labels.size(); i++)
     {
-        QLabel *l = new QLabel();
-
-        l->setObjectName("la_" + QString::number(j));
-        l->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        l->setText(s[j]);
-        l->setGeometry(QRect(10 + y, 40, 90, 30));
-        l->setStyleSheet("QLabel {"
-                         "height: 30px;"
-                         "border: none;"
-                         "background-color: rgb(57, 15, 194);"
-                         "}"
-                         "QLabel#la_0 {"
-                         "border-bottom-left-radius:10px;"
-                         "border-top-left-radius:10px;"
-                         "}"
-                         "QLabel#la_7 {"
-                         "border-bottom-right-radius:10px;"
-                         "border-top-right-radius:10px;"
-                         "}");
-        y += x;
-        la.append(l);
+        QLabel *label = new QLabel(labels[i]);
+        label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        label->setStyleSheet("QLabel {"
+                             "height: 30px;"
+                             "border: none;"
+                             "background-color: rgb(57, 15, 194);"
+                             "}"
+                             "QLabel:first-child {"
+                             "border-bottom-left-radius:10px;"
+                             "border-top-left-radius:10px;"
+                             "}"
+                             "QLabel:last-child {"
+                             "border-bottom-right-radius:10px;"
+                             "border-top-right-radius:10px;"
+                             "}");
+        headerLabels.append(label);
     }
-    return la;
+    return headerLabels;
 }
 
 void MainWindow::table()
 {
-    QGridLayout *layout = new QGridLayout();
-    QList<Voyage> V = voy.getDatabaseValues();
-    int x = 120;
+    QList<Voyage> voyages = voy.getDatabaseValues();
+    int rowHeight = 30;
+    int columnWidth = 120;
     int y = 0;
-    QList<QLabel *> la = HeadBar();
-    for (int j = 0; j < 8; j++)
+
+    QGridLayout *layout = new QGridLayout();
+    QList<QLabel *> headerLabels = createHeadBar();
+
+    for (int i = 0; i < headerLabels.size(); i++)
     {
-        layout->addWidget(la[j], 0, j);
+        layout->addWidget(headerLabels[i], 0, i);
     }
-    int size = voy.row_number();
-    QLineEdit *l[size][8];
-    qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-    for (int i = 0; i < size; i++)
+
+    for (int i = 0; i < voyages.size(); i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            l[i][j] = new QLineEdit();
-            l[i][j]->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-            controleur_grid(i, j, l[i][j], V);
-            l[i][j]->setGeometry(QRect(10 + y, 40, 90, 30));
-            l[i][j]->setStyleSheet("QLineEdit {"
-                                   "height: 30px;"
-                                   "}");
-            l[i][j]->setReadOnly(true);
-            layout->addWidget(l[i][j], i + 1, j);
-            y += x;
+            QLineEdit *lineEdit = new QLineEdit();
+            lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            lineEdit->setStyleSheet("QLineEdit {"
+                                    "height: 30px;"
+                                    "}");
+            lineEdit->setReadOnly(true);
+
+            switch (j) {
+                case 0:
+                    lineEdit->setText(voyages[i].getFlightref());
+                    break;
+                case 1:
+                    lineEdit->setText(voyages[i].getLieudep());
+                    break;
+                case 2:
+                    lineEdit->setText(voyages[i].getLieuarr());
+                    break;
+                case 3:
+                    lineEdit->setText(voyages[i].getDatedep().toString("dd/MM/yyyy"));
+                    break;
+                case 4:
+                    lineEdit->setText(voyages[i].getDatearr().toString("dd/MM/yyyy"));
+                    break;
+                case 5:
+                    lineEdit->setText(voyages[i].getAirline());
+                    break;
+                case 6:
+                    lineEdit->setText(QString::number(voyages[i].getMontant()));
+                    break;
+                case 7:
+                    lineEdit->setText(QString::number(voyages[i].getNbper()));
+                    break;
+            }
+
+            layout->addWidget(lineEdit, i + 1, j);
         }
     }
-    layout->setRowMinimumHeight(0, 30);
+
+    layout->setRowMinimumHeight(0, rowHeight);
     layout->setHorizontalSpacing(0);
-    layout->setRowStretch(size + 1, 1);
+    layout->setRowStretch(voyages.size() + 1, 1);
     layout->setVerticalSpacing(10);
+
     ui->scrollAreaWidgetContents->setLayout(layout);
     ui->scrollAreaWidgetContents->layout()->deleteLater();
-}
-
-void MainWindow::controleur_grid(int i, int j, QLineEdit *l, QList<Voyage> V)
-{
-
-    l->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    if (j == 0)
-        l->setText(V[i].getFlightref());
-    else if (j == 1)
-        l->setText(V[i].getLieudep());
-    else if (j == 2)
-        l->setText(V[i].getLieuarr());
-    else if (j == 3)
-        l->setText(V[i].getDatedep().toString("dd/MM/yyyy"));
-    else if (j == 4)
-        l->setText(V[i].getDatearr().toString("dd/MM/yyyy"));
-    else if (j == 5)
-        l->setText(V[i].getAirline());
-    else if (j == 6)
-        l->setText(QString::number(V[i].getMontant()));
-    else
-        l->setText(QString::number(V[i].getNbper()));
 }
 
 void MainWindow::on_pushButton_clear_clicked()
@@ -433,7 +423,7 @@ void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
     QGridLayout *layout = new QGridLayout();
     int x = 120;
     int y = 0;
-    QList<QLabel *> la = HeadBar();
+    QList<QLabel *> la = createHeadBar();
     for (int j = 0; j < 8; j++)
     {
         layout->addWidget(la[j], 0, j);
@@ -488,10 +478,9 @@ void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
 {
     QGridLayout *layout = new QGridLayout();
     QList<Voyage> V = voy.getDatabaseValues_tri(arg1);
-    qDebug() << ui->comboBox_sort->currentText();
     int x = 120;
     int y = 0;
-    QList<QLabel *> la = HeadBar();
+    QList<QLabel *> la = createHeadBar();
     for (int j = 0; j < 8; j++)
     {
         layout->addWidget(la[j], 0, j);
