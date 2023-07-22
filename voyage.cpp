@@ -116,64 +116,51 @@ bool Voyage::search(QString ref)
 
 QList<Voyage> Voyage::getDatabaseValues()
 {
-    QList<Voyage> Q = {};
-    QSqlQuery query;
-    query.exec("SELECT * FROM VOYAGES");
-    int size = 0;
+    QList<Voyage> voyages;
+    QSqlQuery query("SELECT * FROM VOYAGES");
     while (query.next())
-        size++;
-    int it = 0;
-    query.first();
-    while (it < size)
     {
-        flightref = query.value(0).toString();
-        lieudep = query.value(1).toString();
-        lieuarr = query.value(2).toString();
-        datedep = query.value(3).toDate();
-        datearr = query.value(4).toDate();
-        airline = query.value(5).toString();
-        montant = query.value(6).toFloat();
-        nbper = query.value(7).toInt();
-        Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
-        query.next();
-        it++;
+        QString flightref = query.value(0).toString();
+        QString lieudep = query.value(1).toString();
+        QString lieuarr = query.value(2).toString();
+        QDate datedep = query.value(3).toDate();
+        QDate datearr = query.value(4).toDate();
+        QString airline = query.value(5).toString();
+        float montant = query.value(6).toFloat();
+        int nbper = query.value(7).toInt();
+        voyages.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
     }
-    return Q;
+    return voyages;
 }
-
 QList<Voyage> Voyage::getDatabaseValues_tri(QString order)
 {
-    QList<Voyage> Q = {};
+    QList<Voyage> voyages;
     QSqlQuery query;
-    query.exec("SELECT * FROM VOYAGES ORDER BY " + order);
-    int size = 0;
+    query.prepare("SELECT * FROM VOYAGES ORDER BY :order");
+    query.bindValue(":order", order);
+    query.exec();
     while (query.next())
-        size++;
-    int it = 0;
-    query.first();
-    while (it < size)
     {
-        flightref = query.value(0).toString();
-        lieudep = query.value(1).toString();
-        lieuarr = query.value(2).toString();
-        datedep = query.value(3).toDate();
-        datearr = query.value(4).toDate();
-        airline = query.value(5).toString();
-        montant = query.value(6).toFloat();
-        nbper = query.value(7).toInt();
-        Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
-        query.next();
-        it++;
+        QString flightref = query.value(0).toString();
+        QString lieudep = query.value(1).toString();
+        QString lieuarr = query.value(2).toString();
+        QDate datedep = query.value(3).toDate();
+        QDate datearr = query.value(4).toDate();
+        QString airline = query.value(5).toString();
+        float montant = query.value(6).toFloat();
+        int nbper = query.value(7).toInt();
+        voyages.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
     }
-    return Q;
+    return voyages;
 }
-QList<Voyage> Voyage::getDatabaseValues_recherche(QString recher)
+
+QList<Voyage> Voyage::getDatabaseValues_recherche(QString recher,int *size)
 {
     QList<Voyage> Q;
     QSqlQuery query;
     QString sqlQuery = "SELECT * FROM VOYAGES WHERE FLIGHTREF LIKE :recher OR LIEUDEP LIKE :recher OR LIEUARR LIKE :recher OR DATEARR LIKE :recher OR DATEDEP LIKE :recher OR AIRLINE LIKE :recher OR MONTANT LIKE :recher OR NBPER LIKE :recher";
     query.prepare(sqlQuery);
-    query.bindValue(":recher", recher + "%");
+    query.bindValue(":recher", "%" + recher + "%");
     if (query.exec())
     {
         while (query.next())
@@ -187,6 +174,7 @@ QList<Voyage> Voyage::getDatabaseValues_recherche(QString recher)
             float montant = query.value(6).toFloat();
             int nbper = query.value(7).toInt();
             Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
+            (*size)++;
         }
     }
     return Q;
@@ -225,19 +213,15 @@ int Voyage::getDatabaseValue(QList<Voyage> Q, QString s)
 int Voyage::getNeededDatabaseValue(QString s, QString condition)
 {
     QSqlQuery query;
-    query.prepare("SELECT " + s + " FROM VOYAGES WHERE   " + s + "= '" + condition + "'");
+    query.prepare("SELECT COUNT(" + s + ") FROM VOYAGES WHERE " + s + " = :condition");
+    query.bindValue(":condition", condition);
     query.exec();
-
-    int size = 0;
-    while (query.next())
-        size++;
-    return size;
+    return query.first() ? query.value(0).toInt() : 0;
 }
-
-QSqlQueryModel *Voyage::sort(QString s)
+/*
+QSqlQueryModel* Voyage::sort(QString s)
 {
-    QSqlQuery query;
-    QSqlQueryModel *model = new QSqlQueryModel();
+    QSqlQueryModel* model = new QSqlQueryModel();
     model->setQuery("SELECT * FROM VOYAGES ORDER BY " + s);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("flightref"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("lieudep"));
@@ -249,41 +233,19 @@ QSqlQueryModel *Voyage::sort(QString s)
     model->setHeaderData(7, Qt::Horizontal, QObject::tr("nbper"));
     return model;
 }
+*/
 float Voyage::calculerCoutMoyen(QString Sdep, QString Sarr)
 {
-
-    QList<float> Q = {};
     QSqlQuery query;
-    int size = 0;
-    query.exec("SELECT MONTANT FROM VOYAGES WHERE (LIEUDEP= '" + Sdep + "') AND (LIEUARR= '" + Sarr + "')");
-    while (query.next())
-    {
-        size++;
-    }
-    int it = 0;
-    query.first();
-    while (it < size)
-    {
-        Q.append(query.value(0).toFloat());
-        it++;
-        query.next();
-    }
-    int s = 0;
-    for (int i = 0; i < size; i++)
-        s += Q[i];
-    if (size == 0)
-        return 0;
-    float moy = (float)s / size;
-    return moy;
+    query.prepare("SELECT AVG(MONTANT) FROM VOYAGES WHERE LIEUDEP = :dep AND LIEUARR = :arr");
+    query.bindValue(":dep", Sdep);
+    query.bindValue(":arr", Sarr);
+    query.exec();
+    return query.first() ? query.value(0).toFloat() : 0;
 }
 
 int Voyage::row_number()
 {
-    QSqlQuery query;
-    int size = 0;
-    query.prepare("SELECT * FROM VOYAGES");
-    query.exec();
-    while (query.next())
-        size++;
-    return size;
+    QSqlQuery query("SELECT COUNT(*) FROM VOYAGES");
+    return query.exec() && query.first() ? query.value(0).toInt() : 0;
 }

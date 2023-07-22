@@ -867,12 +867,12 @@ background-color:rgba(5, 24, 150);
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>C:/Users/aliam/Downloads/icons8-pdf-48.png</normaloff>C:/Users/aliam/Downloads/icons8-pdf-48.png</iconset>
+         <normaloff>pdf.png</normaloff>pdf.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>24</width>
-         <height>24</height>
+         <width>16</width>
+         <height>16</height>
         </size>
        </property>
       </widget>

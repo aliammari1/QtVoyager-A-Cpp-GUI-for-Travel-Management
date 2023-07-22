@@ -54,7 +54,7 @@ public:
     bool search(QString ref);
     QSqlQueryModel *sort(QString s);
     QList<Voyage> getDatabaseValues();
-    QList<Voyage> getDatabaseValues_recherche(QString recher);
+    QList<Voyage> getDatabaseValues_recherche(QString recher,int *size);
     QList<Voyage> getDatabaseValues_tri(QString order);
     int getDatabaseValue(QList<Voyage> Q, QString S);
     int getNeededDatabaseValue(QString s, QString condition);

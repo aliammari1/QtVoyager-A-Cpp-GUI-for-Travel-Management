@@ -3,8 +3,7 @@
 #include <QEvent>
 #include <QDebug>
 
-MyButton::MyButton(QWidget *parent) : QPushButton(parent),
-                                      m_colorAnimation(this, "color")
+MyButton::MyButton(QWidget *parent) : QPushButton(parent), m_colorAnimation(this, "color")
 {
     this->installEventFilter(this);
 }

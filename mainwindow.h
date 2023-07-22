@@ -14,6 +14,7 @@
 #include <QLineSeries>
 #include <QPieSeries>
 #include <QPieSlice>
+#include "mybutton.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -29,22 +30,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void sorter(QString s);
-
     void charts();
-
     void style();
-
     void controle();
 
-    void rotate();
-
     QList<QLabel *> createHeadBar();
-
     void table();
     void rechercher();
     void profit();
     void graphics();
+
 private slots:
 
     void on_pushButton_ajouter_clicked();

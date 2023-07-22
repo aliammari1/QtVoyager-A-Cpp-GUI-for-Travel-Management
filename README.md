@@ -39,7 +39,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 ## Credits
 
-This project was created by [Your Name].](about:blank)
+This project was created by [Ali Ammari](www.github.com/aliammari)
 
 ## Contributing
 

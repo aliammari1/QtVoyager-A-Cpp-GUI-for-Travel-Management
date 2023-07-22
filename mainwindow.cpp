@@ -40,11 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
             {
         for (auto& groupBox : std::array<QGroupBox*,4>{ui->groupBox, ui->Information_Box, ui->groupBox_2, ui->groupBox_3})
         {
-            groupBox->setStyleSheet("QGroupBox {"
-                                    "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"
-                                    "border-radius:20px;"
-                                    "color:white;"
-                                    "}");
+            groupBox->setStyleSheet("QGroupBox {"      "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"      "border-radius:20px;"      "color:white;"      "}");
         };
 
         lineargradx-=0.001;
@@ -81,14 +77,10 @@ void MainWindow::on_pushButton_ajouter_clicked()
         profit();
         table();
         charts();
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Ajout effectué.\n"
-                                                                         "Click Cancel to exit."),
-                                 QMessageBox::Cancel);
+        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Ajout effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
-        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Ajout non effectué.\n"
-                                                                          "Click Cancel to exit."),
-                              QMessageBox::Cancel);
+        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Ajout non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
 //-----------------------------delete button--------------------------------
 void MainWindow::on_pushButton_delete_clicked()
@@ -100,14 +92,10 @@ void MainWindow::on_pushButton_delete_clicked()
         profit();
         table();
         charts();
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Suppression effectué.\n"
-                                                                         "Click Cancel to exit."),
-                                 QMessageBox::Cancel);
+        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Suppression effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
-        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Suppression non effectué.\n"
-                                                                          "Click Cancel to exit."),
-                              QMessageBox::Cancel);
+        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Suppression non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
 //-------------------------------update button---------------------------------
 void MainWindow::on_pushButton_update_clicked()
@@ -128,9 +116,7 @@ void MainWindow::on_pushButton_update_clicked()
         profit();
         charts();
         table();
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("update effectué.\n"
-                                                                         "Click Cancel to exit."),
-                                 QMessageBox::Cancel);
+        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("update effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("update non effectué.\n"
@@ -164,9 +150,7 @@ void MainWindow::on_pushButton_Search_clicked()
         ui->dateEdit_datearr->setDate(voy.getDatearr());
         ui->lineEdit_montant->setText(QString::number(voy.getMontant()));
         ui->lineEdit_nbper->setText(QString::number(voy.getNbper()));
-        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("recherche effectué.\n"
-                                                                         "Click Cancel to exit."),
-                                 QMessageBox::Cancel);
+        QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("recherche effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("recherche non effectué.\n"
@@ -242,74 +226,51 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::charts()
 {
-    QHBoxLayout *layout = new QHBoxLayout();
 
     qDeleteAll(ui->widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-    QPieSeries *series = new QPieSeries();
-    int nb_tunisia = voy.getNeededDatabaseValue("LIEUDEP", "Tunisia");
-    int nb_france = voy.getNeededDatabaseValue("LIEUDEP", "France");
-    int nb_uk = voy.getNeededDatabaseValue("LIEUDEP", "United Kingdom");
-    QPieSlice *s1 = new QPieSlice();
-    QPieSlice *s2 = new QPieSlice();
-    QPieSlice *s3 = new QPieSlice();
 
-    s1->setValue(nb_tunisia);
-    s1->setLabel("Tunisia");
-    s2->setValue(nb_france);
-    s2->setLabel("France");
-    s3->setValue(nb_uk);
-    s3->setLabel("UnitedKingdom");
-    series->append({s1, s2, s3});
-    /*
-    series->append(s1);
-    series->append(s2);
-    series->append(s3);
-    */
+    QPieSeries *series = new QPieSeries();
+    series->append("Tunisia", voy.getNeededDatabaseValue("LIEUDEP", "Tunisia"));
+    series->append("France", voy.getNeededDatabaseValue("LIEUDEP", "France"));
+    series->append("United Kingdom", voy.getNeededDatabaseValue("LIEUDEP", "United Kingdom"));
     series->setLabelsVisible();
-    series->setPieSize(nb_uk + nb_france + nb_tunisia);
+    series->setPieSize(300);
 
     QChart *chart = new QChart();
-
-    chart->removeAllSeries();
     chart->addSeries(series);
-    chart->createDefaultAxes();
-    chart->setTitle("Simple barchart example");
-    chart->setAnimationOptions(QChart::AllAnimations);
+    chart->setTitle("Number of flights by country");
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignRight);
 
     QChartView *chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->repaint();
-    chartView->update();
     chartView->resize(460, 230);
+
+    QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(chartView);
     ui->widget->setLayout(layout);
-    ui->widget->layout()->deleteLater();
 }
 
 void MainWindow::style()
 {
-    ui->centralwidget->setStyleSheet("QWidget#tab {"
-                                     "background-color:#1F408E;"
-                                     "}"
-                                     "QGroupBox {"
-                                     "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:1, y2:1, stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 150, 125));"
-                                     "border-radius:20px;"
-                                     "color:white;"
-                                     "}"
-                                     "QLineEdit {"
-                                     "border: none;"
-                                     "border-radius: 10px;"
-                                     "color:white;"
-                                     "background-color:#0C1B64;"
-                                     "}"
-                                     "QLabel {"
-                                     "color:white;"
-                                     "}"
-                                     "QScrollArea #scrollAreaWidgetContents {"
-                                     "background-color:#05187A;"
-                                     "}");
+    QString styleSheet = "QWidget#tab { background-color: #1F408E; }"
+                         "QGroupBox { background-color: qlineargradient(spread: pad, x1: 0.349, y1: 0.336364, x2: 1, y2: 1, stop: 0 rgba(5, 24, 122, 200), stop: 1 rgba(5, 24, 150, 125)); border-radius: 20px; color: white; }"
+                         "QLineEdit { border: none; border-radius: 10px; color: white; background-color: #0C1B64; }"
+                         "QLabel { color: white; }"
+                         "QScrollArea #scrollAreaWidgetContents { background-color: #05187A; }";
+    ui->centralwidget->setStyleSheet(styleSheet);
+}
+
+void MainWindow::on_pushButton_clear_clicked()
+{
+    ui->lineEdit_flightref->clear();
+    ui->comboBox_lieudep->setCurrentIndex(0);
+    ui->comboBox_lieuarr->setCurrentIndex(0);
+    ui->dateEdit_datedep->setDate(QDate(2000, 1, 1));
+    ui->dateEdit_datearr->setDate(QDate(2000, 1, 1));
+    ui->comboBox_Airline->setCurrentIndex(0);
+    ui->lineEdit_montant->clear();
+    ui->lineEdit_nbper->clear();
 }
 
 QList<QLabel *> MainWindow::createHeadBar()
@@ -343,7 +304,6 @@ void MainWindow::table()
     QList<Voyage> voyages = voy.getDatabaseValues();
     int rowHeight = 30;
     int columnWidth = 120;
-    int y = 0;
 
     QGridLayout *layout = new QGridLayout();
     QList<QLabel *> headerLabels = createHeadBar();
@@ -355,41 +315,24 @@ void MainWindow::table()
 
     for (int i = 0; i < voyages.size(); i++)
     {
+        QStringList voyageData = {
+            voyages[i].getFlightref(),
+            voyages[i].getLieudep(),
+            voyages[i].getLieuarr(),
+            voyages[i].getDatedep().toString("dd/MM/yyyy"),
+            voyages[i].getDatearr().toString("dd/MM/yyyy"),
+            voyages[i].getAirline(),
+            QString::number(voyages[i].getMontant()),
+            QString::number(voyages[i].getNbper())};
+
         for (int j = 0; j < 8; j++)
         {
-            QLineEdit *lineEdit = new QLineEdit();
+            QLineEdit *lineEdit = new QLineEdit(voyageData[j]);
             lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             lineEdit->setStyleSheet("QLineEdit {"
                                     "height: 30px;"
                                     "}");
             lineEdit->setReadOnly(true);
-
-            switch (j) {
-                case 0:
-                    lineEdit->setText(voyages[i].getFlightref());
-                    break;
-                case 1:
-                    lineEdit->setText(voyages[i].getLieudep());
-                    break;
-                case 2:
-                    lineEdit->setText(voyages[i].getLieuarr());
-                    break;
-                case 3:
-                    lineEdit->setText(voyages[i].getDatedep().toString("dd/MM/yyyy"));
-                    break;
-                case 4:
-                    lineEdit->setText(voyages[i].getDatearr().toString("dd/MM/yyyy"));
-                    break;
-                case 5:
-                    lineEdit->setText(voyages[i].getAirline());
-                    break;
-                case 6:
-                    lineEdit->setText(QString::number(voyages[i].getMontant()));
-                    break;
-                case 7:
-                    lineEdit->setText(QString::number(voyages[i].getNbper()));
-                    break;
-            }
 
             layout->addWidget(lineEdit, i + 1, j);
         }
@@ -404,110 +347,103 @@ void MainWindow::table()
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
-void MainWindow::on_pushButton_clear_clicked()
-{
-    ui->lineEdit_flightref->clear();
-    ui->comboBox_lieudep->setCurrentIndex(0);
-    ui->comboBox_lieuarr->setCurrentIndex(0);
-    ui->dateEdit_datedep->setDate(QDate(2000, 1, 1));
-    ui->dateEdit_datearr->setDate(QDate(2000, 1, 1));
-    ui->comboBox_Airline->setCurrentIndex(0);
-    ui->lineEdit_montant->clear();
-    ui->lineEdit_nbper->clear();
-}
-
 void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
 {
-    QList<Voyage> V = voy.getDatabaseValues_recherche(arg1);
+    int size = 0;
+    QList<Voyage> voyages = voy.getDatabaseValues_recherche(arg1, &size);
+    int rowHeight = 30;
+    int columnWidth = 120;
+
+    qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
 
     QGridLayout *layout = new QGridLayout();
-    int x = 120;
-    int y = 0;
-    QList<QLabel *> la = createHeadBar();
-    for (int j = 0; j < 8; j++)
+    QList<QLabel *> headerLabels = createHeadBar();
+
+    for (int i = 0; i < headerLabels.size(); i++)
     {
-        layout->addWidget(la[j], 0, j);
+        layout->addWidget(headerLabels[i], 0, i);
     }
 
-    QSqlQuery query;
-    int size = 0;
-    query.exec("SELECT * FROM VOYAGES WHERE (FLIGHTREF LIKE '" + arg1 + "%')"
-                                                                        "OR(LIEUDEP LIKE '" +
-               arg1 + "%')"
-                      "OR(LIEUARR LIKE '" +
-               arg1 + "%')"
-                      "OR(DATEARR LIKE '" +
-               arg1 + "%')"
-                      "OR(DATEDEP LIKE '" +
-               arg1 + "%')"
-                      "OR(AIRLINE LIKE '" +
-               arg1 + "%')"
-                      "OR(MONTANT LIKE '" +
-               arg1 + "%')"
-                      "OR(NBPER LIKE '" +
-               arg1 + "%')");
-    while (query.next())
-        size++;
-    QLineEdit *l[size][8];
-    qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < voyages.size(); i++)
     {
+        QStringList voyageData = {
+            voyages[i].getFlightref(),
+            voyages[i].getLieudep(),
+            voyages[i].getLieuarr(),
+            voyages[i].getDatedep().toString("dd/MM/yyyy"),
+            voyages[i].getDatearr().toString("dd/MM/yyyy"),
+            voyages[i].getAirline(),
+            QString::number(voyages[i].getMontant()),
+            QString::number(voyages[i].getNbper())};
+
         for (int j = 0; j < 8; j++)
         {
-            l[i][j] = new QLineEdit();
-            l[i][j]->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-            controleur_grid(i, j, l[i][j], V);
-            l[i][j]->setGeometry(QRect(10 + y, 40, 90, 30));
-            l[i][j]->setStyleSheet("QLineEdit {"
-                                   "height: 30px;"
-                                   "}");
-            l[i][j]->setReadOnly(true);
-            layout->addWidget(l[i][j], i + 1, j);
-            y += x;
+            QLineEdit *lineEdit = new QLineEdit(voyageData[j]);
+            lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            lineEdit->setStyleSheet("QLineEdit {"
+                                    "height: 30px;"
+                                    "}");
+            lineEdit->setReadOnly(true);
+
+            layout->addWidget(lineEdit, i + 1, j);
         }
     }
-    layout->setRowMinimumHeight(0, 30);
+
+    layout->setRowMinimumHeight(0, rowHeight);
     layout->setHorizontalSpacing(0);
-    layout->setRowStretch(size + 1, 1);
+    layout->setRowStretch(voyages.size() + 1, 1);
     layout->setVerticalSpacing(10);
+
     ui->scrollAreaWidgetContents->setLayout(layout);
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
 void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
 {
-    QGridLayout *layout = new QGridLayout();
-    QList<Voyage> V = voy.getDatabaseValues_tri(arg1);
-    int x = 120;
-    int y = 0;
-    QList<QLabel *> la = createHeadBar();
-    for (int j = 0; j < 8; j++)
-    {
-        layout->addWidget(la[j], 0, j);
-    }
-    int size = voy.row_number();
-    QLineEdit *l[size][8];
+    QList<Voyage> voyages = voy.getDatabaseValues_tri(arg1);
+    int rowHeight = 30;
+    int columnWidth = 120;
+
     qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-    for (int i = 0; i < size; i++)
+
+    QGridLayout *layout = new QGridLayout();
+    QList<QLabel *> headerLabels = createHeadBar();
+
+    for (int i = 0; i < headerLabels.size(); i++)
     {
+        layout->addWidget(headerLabels[i], 0, i);
+    }
+
+    for (int i = 0; i < voyages.size(); i++)
+    {
+        QStringList voyageData = {
+            voyages[i].getFlightref(),
+            voyages[i].getLieudep(),
+            voyages[i].getLieuarr(),
+            voyages[i].getDatedep().toString("dd/MM/yyyy"),
+            voyages[i].getDatearr().toString("dd/MM/yyyy"),
+            voyages[i].getAirline(),
+            QString::number(voyages[i].getMontant()),
+            QString::number(voyages[i].getNbper())};
+
         for (int j = 0; j < 8; j++)
         {
-            l[i][j] = new QLineEdit();
-            l[i][j]->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-            controleur_grid(i, j, l[i][j], V);
-            l[i][j]->setGeometry(QRect(10 + y, 40, 90, 30));
-            l[i][j]->setStyleSheet("QLineEdit {"
-                                   "height: 30px;"
-                                   "}");
-            l[i][j]->setReadOnly(true);
-            layout->addWidget(l[i][j], i + 1, j);
-            y += x;
+            QLineEdit *lineEdit = new QLineEdit(voyageData[j]);
+            lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            lineEdit->setStyleSheet("QLineEdit {"
+                                    "height: 30px;"
+                                    "}");
+            lineEdit->setReadOnly(true);
+
+            layout->addWidget(lineEdit, i + 1, j);
         }
     }
-    layout->setRowMinimumHeight(0, 30);
+
+    layout->setRowMinimumHeight(0, rowHeight);
     layout->setHorizontalSpacing(0);
-    layout->setRowStretch(size + 1, 1);
+    layout->setRowStretch(voyages.size() + 1, 1);
     layout->setVerticalSpacing(10);
+
     ui->scrollAreaWidgetContents->setLayout(layout);
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
@@ -549,7 +485,7 @@ void MainWindow::update_label()
     if (data != "" && data.length() > 10)
     {
         QSqlQuery query;
-        query.exec("SELECT * FROM VOYAGEURS WHERE RFID_CARD='" + data + "'");
+        query.exec("SELECT * FROM VOYAGEURS WHERE RFID_CARD = '" + data + "'");
         query.first();
         qDebug() << query.value(1).toByteArray();
         A.write_to_arduino(query.value(1).toByteArray());
