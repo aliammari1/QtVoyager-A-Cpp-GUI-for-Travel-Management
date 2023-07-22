@@ -848,6 +848,9 @@ background-color:rgba(5, 24, 150);
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_3">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -863,7 +866,7 @@ background-color:rgba(5, 24, 150);
         </font>
        </property>
        <property name="text">
-        <string/>
+        <string>pdf</string>
        </property>
        <property name="icon">
         <iconset>
