@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         button->SetColor(QColor(255, 255, 255));
     }
-    ui->label_moyen->setText(QString::number(voy.calculerCoutMoyen(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
+    ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
     QTimer *timer = new QTimer();
 
     connect(timer, &QTimer::timeout, [=]()
@@ -141,7 +141,7 @@ void MainWindow::on_dateEdit_datedep_userDateChanged(const QDate &date)
 
 void MainWindow::on_pushButton_Search_clicked()
 {
-    if (voy.search(ui->lineEdit_flightref->text()) && !ui->lineEdit_flightref->text().isEmpty())
+    if (voy.searchByFlightRef(ui->lineEdit_flightref->text()) && !ui->lineEdit_flightref->text().isEmpty())
     {
         ui->comboBox_lieudep->setCurrentText(voy.getLieudep());
         ui->comboBox_lieuarr->setCurrentText(voy.getLieuarr());
@@ -178,7 +178,7 @@ void MainWindow::on_pushButton_3_clicked()
     printer.setOutputFileName("voyage.pdf");
     QTextDocument doc;
 
-    QList<Voyage> V = voy.getDatabaseValues_tri("FLIGHTREF");
+    QList<Voyage> V = voy.getAllVoyagesSorted("FLIGHTREF");
     QString h("");
     h = "<html>"
         "<body>"
@@ -230,9 +230,9 @@ void MainWindow::charts()
     qDeleteAll(ui->widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
 
     QPieSeries *series = new QPieSeries();
-    series->append("Tunisia", voy.getNeededDatabaseValue("LIEUDEP", "Tunisia"));
-    series->append("France", voy.getNeededDatabaseValue("LIEUDEP", "France"));
-    series->append("United Kingdom", voy.getNeededDatabaseValue("LIEUDEP", "United Kingdom"));
+    series->append("Tunisia", voy.getVoyageCount("LIEUDEP", "Tunisia"));
+    series->append("France", voy.getVoyageCount("LIEUDEP", "France"));
+    series->append("United Kingdom", voy.getVoyageCount("LIEUDEP", "United Kingdom"));
     series->setLabelsVisible();
     series->setPieSize(300);
 
@@ -301,7 +301,7 @@ QList<QLabel *> MainWindow::createHeadBar()
 
 void MainWindow::table()
 {
-    QList<Voyage> voyages = voy.getDatabaseValues();
+    QList<Voyage> voyages = voy.getAllVoyages();
     int rowHeight = 30;
     int columnWidth = 120;
 
@@ -350,7 +350,7 @@ void MainWindow::table()
 void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
 {
     int size = 0;
-    QList<Voyage> voyages = voy.getDatabaseValues_recherche(arg1, &size);
+    QList<Voyage> voyages = voy.searchVoyages(arg1, &size);
     int rowHeight = 30;
     int columnWidth = 120;
 
@@ -400,7 +400,7 @@ void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
 
 void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
 {
-    QList<Voyage> voyages = voy.getDatabaseValues_tri(arg1);
+    QList<Voyage> voyages = voy.getAllVoyagesSorted(arg1);
     int rowHeight = 30;
     int columnWidth = 120;
 
@@ -450,12 +450,12 @@ void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_comboBox_lieu_From_currentTextChanged(const QString &arg1)
 {
-    ui->label_moyen->setText(QString::number(voy.calculerCoutMoyen(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
+    ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
 void MainWindow::on_comboBox_lieu_To_currentTextChanged(const QString &arg1)
 {
-    ui->label_moyen->setText(QString::number(voy.calculerCoutMoyen(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
+    ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
 void MainWindow::profit()

@@ -51,15 +51,13 @@ public:
     bool supprimer(QString);
     bool update(QString ref);
 
-    bool search(QString ref);
+    bool searchByFlightRef(QString ref);
     QSqlQueryModel *sort(QString s);
-    QList<Voyage> getDatabaseValues();
-    QList<Voyage> getDatabaseValues_recherche(QString recher,int *size);
-    QList<Voyage> getDatabaseValues_tri(QString order);
-    int getDatabaseValue(QList<Voyage> Q, QString S);
-    int getNeededDatabaseValue(QString s, QString condition);
-    float calculerCoutMoyen(QString Sdep, QString Sarr);
-    int row_number();
+    QList<Voyage> getAllVoyages();
+    QList<Voyage> searchVoyages(QString recher,int *size);
+    QList<Voyage> getAllVoyagesSorted(QString order);
+    int getVoyageCount(QString s, QString condition);
+    float calculateAverageCost(QString Sdep, QString Sarr);
 };
 
 #endif // VOYAGE_H

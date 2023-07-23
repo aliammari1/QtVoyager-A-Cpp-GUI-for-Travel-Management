@@ -64,7 +64,7 @@ QSqlQueryModel * Voyage::afficher()
 bool Voyage::supprimer(QString ref)
 {
     QSqlQuery query;
-    bool t = search(ref);
+    bool t = searchByFlightRef(ref);
     if (t)
     {
         query.prepare("DELETE FROM VOYAGES WHERE FLIGHTREF= :ref");
@@ -77,7 +77,7 @@ bool Voyage::supprimer(QString ref)
 bool Voyage::update(QString ref)
 {
     QSqlQuery query;
-    bool t = search(ref);
+    bool t = searchByFlightRef(ref);
     if (t)
     {
         query.prepare("UPDATE VOYAGES SET LIEUDEP= :lieudep ,LIEUARR= :lieuarr ,DATEDEP= :datedep ,DATEARR= :datearr ,AIRLINE= :airline ,MONTANT= :montant ,NBPER= :nbper WHERE FLIGHTREF= :ref");
@@ -95,7 +95,7 @@ bool Voyage::update(QString ref)
 }
 
 //----------------------------------voyage search---------------------------------------
-bool Voyage::search(QString ref)
+bool Voyage::searchByFlightRef(QString ref)
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM VOYAGES WHERE FLIGHTREF= '" + ref + "'");
@@ -114,7 +114,7 @@ bool Voyage::search(QString ref)
     return t;
 }
 
-QList<Voyage> Voyage::getDatabaseValues()
+QList<Voyage> Voyage::getAllVoyages()
 {
     QList<Voyage> voyages;
     QSqlQuery query("SELECT * FROM VOYAGES");
@@ -132,7 +132,7 @@ QList<Voyage> Voyage::getDatabaseValues()
     }
     return voyages;
 }
-QList<Voyage> Voyage::getDatabaseValues_tri(QString order)
+QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
 {
     QList<Voyage> voyages;
     QSqlQuery query;
@@ -154,7 +154,7 @@ QList<Voyage> Voyage::getDatabaseValues_tri(QString order)
     return voyages;
 }
 
-QList<Voyage> Voyage::getDatabaseValues_recherche(QString recher,int *size)
+QList<Voyage> Voyage::searchVoyages(QString recher,int *size)
 {
     QList<Voyage> Q;
     QSqlQuery query;
@@ -180,37 +180,7 @@ QList<Voyage> Voyage::getDatabaseValues_recherche(QString recher,int *size)
     return Q;
 }
 
-int Voyage::getDatabaseValue(QList<Voyage> Q, QString s)
-{
-    QSqlQuery query;
-    Voyage v;
-    query.prepare("SELECT " + s + " FROM VOYAGES");
-    query.exec();
-    int size = 0;
-    while (query.next())
-    {
-        size++;
-    }
-    int it = 0;
-    query.first();
-    while (it < size)
-    {
-        v.flightref = query.value(0).toString();
-        v.lieudep = query.value(1).toString();
-        v.lieuarr = query.value(2).toString();
-        v.datedep = query.value(3).toDate();
-        v.datearr = query.value(4).toDate();
-        v.airline = query.value(5).toString();
-        v.montant = query.value(6).toFloat();
-        v.nbper = query.value(7).toInt();
-        Q.append(v);
-        it++;
-        query.next();
-    }
-    return size;
-}
-
-int Voyage::getNeededDatabaseValue(QString s, QString condition)
+int Voyage::getVoyageCount(QString s, QString condition)
 {
     QSqlQuery query;
     query.prepare("SELECT COUNT(" + s + ") FROM VOYAGES WHERE " + s + " = :condition");
@@ -234,7 +204,7 @@ QSqlQueryModel* Voyage::sort(QString s)
     return model;
 }
 */
-float Voyage::calculerCoutMoyen(QString Sdep, QString Sarr)
+float Voyage::calculateAverageCost(QString Sdep, QString Sarr)
 {
     QSqlQuery query;
     query.prepare("SELECT AVG(MONTANT) FROM VOYAGES WHERE LIEUDEP = :dep AND LIEUARR = :arr");
@@ -242,10 +212,4 @@ float Voyage::calculerCoutMoyen(QString Sdep, QString Sarr)
     query.bindValue(":arr", Sarr);
     query.exec();
     return query.first() ? query.value(0).toFloat() : 0;
-}
-
-int Voyage::row_number()
-{
-    QSqlQuery query("SELECT COUNT(*) FROM VOYAGES");
-    return query.exec() && query.first() ? query.value(0).toInt() : 0;
 }
