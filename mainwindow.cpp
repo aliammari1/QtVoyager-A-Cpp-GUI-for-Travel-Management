@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    int ret = A.connect_arduino(); // lancer la connexion à arduino
+    int ret = A.connect_arduino(); // Connect to Arduino
     switch (ret)
     {
     case (0):
@@ -18,14 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
     case (-1):
         qDebug() << "arduino is not available";
     }
-    QObject::connect(A.getserial(), SIGNAL(readyRead()), this, SLOT(update_label())); // permet de lancer
+    QObject::connect(A.getserial(), SIGNAL(readyRead()), this, SLOT(update_label())); // Launch serial communication
 
-    table();
-    style();
-    controle();
-    charts();
-    profit();
-    graphics();
+    table();    // Initialize table
+    style();    // Set style
+    controle(); // Control input
+    charts();   // Initialize charts
+    profit();   // Calculate profit
+    graphics(); // Set graphics
     //---------------initialisation de place de TabWidget------------------------------
     ui->tabWidget->setGeometry(QRect(0, 0, 1600, 1000));
     //---------------setting PushButton initialization color------------------------------
@@ -60,6 +60,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// Add a new voyage to the database
 void MainWindow::on_pushButton_ajouter_clicked()
 {
     QString flightref = ui->lineEdit_flightref->text();
@@ -82,7 +83,8 @@ void MainWindow::on_pushButton_ajouter_clicked()
     else
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Ajout non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
-//-----------------------------delete button--------------------------------
+
+// Delete a voyage from the database
 void MainWindow::on_pushButton_delete_clicked()
 {
     QString ref = ui->lineEdit_delete->text();
@@ -97,7 +99,8 @@ void MainWindow::on_pushButton_delete_clicked()
     else
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Suppression non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
-//-------------------------------update button---------------------------------
+
+// Update a voyage in the database
 void MainWindow::on_pushButton_update_clicked()
 {
     QString ref = ui->lineEdit_flightref->text();
@@ -119,11 +122,10 @@ void MainWindow::on_pushButton_update_clicked()
         QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("update effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
-        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("update non effectué.\n"
-                                                                          "Click Cancel to exit."),
-                              QMessageBox::Cancel);
+        QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("update non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
 
+// Control input
 void MainWindow::controle()
 {
     QRegularExpression rx("\\b[a-zA-Z0-9]{1,8}\\b");
@@ -133,12 +135,14 @@ void MainWindow::controle()
     ui->lineEdit_montant->setValidator(new QDoubleValidator(0, 99999999, 2, this));
 }
 
+// Update the date of arrival when the date of departure is changed
 void MainWindow::on_dateEdit_datedep_userDateChanged(const QDate &date)
 {
     ui->dateEdit_datearr->setDate(date);
     ui->dateEdit_datearr->setMinimumDate(date);
 }
 
+// Search for a voyage by flight reference
 void MainWindow::on_pushButton_Search_clicked()
 {
     if (voy.searchByFlightRef(ui->lineEdit_flightref->text()) && !ui->lineEdit_flightref->text().isEmpty())
@@ -158,6 +162,7 @@ void MainWindow::on_pushButton_Search_clicked()
                               QMessageBox::Cancel);
 }
 
+// Generate a PDF file of all voyages and open it
 void MainWindow::on_pushButton_3_clicked()
 {
     /*
@@ -224,9 +229,9 @@ void MainWindow::on_pushButton_3_clicked()
     QDesktopServices::openUrl(QUrl::fromLocalFile("voyage.pdf"));
 }
 
+// Generate a pie chart of voyages by departure location
 void MainWindow::charts()
 {
-
     qDeleteAll(ui->widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
 
     QPieSeries *series = new QPieSeries();
@@ -251,6 +256,7 @@ void MainWindow::charts()
     ui->widget->setLayout(layout);
 }
 
+// Apply custom styles to the UI
 void MainWindow::style()
 {
     QString styleSheet = "QWidget#tab { background-color: #1F408E; }"
@@ -261,6 +267,7 @@ void MainWindow::style()
     ui->centralwidget->setStyleSheet(styleSheet);
 }
 
+// Clear the input fields in the UI
 void MainWindow::on_pushButton_clear_clicked()
 {
     ui->lineEdit_flightref->clear();
@@ -273,6 +280,7 @@ void MainWindow::on_pushButton_clear_clicked()
     ui->lineEdit_nbper->clear();
 }
 
+// Create the header bar for the table in the UI
 QList<QLabel *> MainWindow::createHeadBar()
 {
     QStringList labels = {"flightref", "lieudep", "lieuarr", "datedep", "datearr", "airline", "montant", "nbper"};
@@ -299,6 +307,7 @@ QList<QLabel *> MainWindow::createHeadBar()
     return headerLabels;
 }
 
+// Populate the table in the UI with data from the database
 void MainWindow::table()
 {
     QList<Voyage> voyages = voy.getAllVoyages();
@@ -398,6 +407,7 @@ void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
+// This function updates the UI with the sorted list of voyages based on the selected sorting criteria
 void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
 {
     QList<Voyage> voyages = voy.getAllVoyagesSorted(arg1);
@@ -448,16 +458,19 @@ void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
+// This function updates the average cost label based on the selected departure and arrival locations
 void MainWindow::on_comboBox_lieu_From_currentTextChanged(const QString &arg1)
 {
     ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
+// This function updates the average cost label based on the selected departure and arrival locations
 void MainWindow::on_comboBox_lieu_To_currentTextChanged(const QString &arg1)
 {
     ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
+// This function calculates the total profit earned from all voyages and updates the profit label
 void MainWindow::profit()
 {
     QSqlQuery query;
@@ -477,6 +490,7 @@ void MainWindow::profit()
     ui->label_profit->setText(QString::number(earn));
 }
 
+// This function updates the RFID label with the latest data received from the Arduino
 void MainWindow::update_label()
 {
     data = A.read_from_arduino();
@@ -493,6 +507,7 @@ void MainWindow::update_label()
     }
 }
 
+// This function creates a graphics scene and adds a plane and circles to it, then animates the plane's movement
 void MainWindow::graphics()
 {
     QGraphicsScene *scene;
@@ -518,14 +533,13 @@ void MainWindow::graphics()
     QTimer *t = new QTimer();
     connect(t, &QTimer::timeout, [=]()
             {
-        QTimeLine *timer = new QTimeLine(5000);
-        QGraphicsItemAnimation *animation_plane = new QGraphicsItemAnimation();
-            animation_plane->setItem(pixmap);
-            animation_plane->setTimeLine(timer);
-            animation_plane->setTranslationAt(0,100,0);
-            animation_plane->setTranslationAt(0.5,-800,00);
-            animation_plane->setTranslationAt(1,100,0);
-
-            timer->start(); });
+                    QTimeLine *timer = new QTimeLine(5000);
+                    QGraphicsItemAnimation *animation_plane = new QGraphicsItemAnimation();
+                        animation_plane->setItem(pixmap);
+                        animation_plane->setTimeLine(timer);
+                        animation_plane->setTranslationAt(0,100,0);
+                        animation_plane->setTranslationAt(0.5,-800,00);
+                        animation_plane->setTranslationAt(1,100,0);
+                        timer->start(); });
     t->start(5000);
 }

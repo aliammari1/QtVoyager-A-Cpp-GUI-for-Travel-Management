@@ -33,10 +33,8 @@ public:
     void charts();
     void style();
     void controle();
-
     QList<QLabel *> createHeadBar();
     void table();
-    void rechercher();
     void profit();
     void graphics();
 
