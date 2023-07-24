@@ -1,7 +1,7 @@
 # Interface Gestion de Voyages
 
 This is a Qt C++ application that provides an interface for managing travel data. The main functionality is implemented in the `mainwindow.cpp` file.
-![Preview Image](preview.png)
+![Preview Image](./assets/images/preview.png)
 ## Features
 
 - Search for travel data by date, airline, amount, and number of people

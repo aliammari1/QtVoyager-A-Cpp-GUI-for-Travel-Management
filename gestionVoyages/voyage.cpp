@@ -12,6 +12,7 @@ Voyage::Voyage()
     montant = 0.0;
     nbper = 0;
 }
+
 //-------------------------------constructeur voyage avec des arguments----------------------------------
 Voyage::Voyage(QString flightref, QString lieudep, QString lieuarr, QDate datedep, QDate datearr, QString airline, float montant, int nbper)
 {
@@ -24,6 +25,7 @@ Voyage::Voyage(QString flightref, QString lieudep, QString lieuarr, QDate datede
     this->montant = montant;
     this->nbper = nbper;
 }
+
 //---------------------------create voyage----------------------------------
 bool Voyage::ajouter()
 {
@@ -43,6 +45,7 @@ bool Voyage::ajouter()
     query.bindValue(":nbper", n);
     return query.exec();
 }
+
 //--------------------------------voyage showing all table cells--------------------------------------
 /*
 QSqlQueryModel * Voyage::afficher()
@@ -60,6 +63,7 @@ QSqlQueryModel * Voyage::afficher()
     return model;
 }
 */
+
 //---------------------------voyage delete-----------------------------------
 bool Voyage::supprimer(QString ref)
 {
@@ -73,6 +77,7 @@ bool Voyage::supprimer(QString ref)
     }
     return t;
 }
+
 //---------------------------voyage update-----------------------------------
 bool Voyage::update(QString ref)
 {
@@ -132,6 +137,7 @@ QList<Voyage> Voyage::getAllVoyages()
     }
     return voyages;
 }
+
 QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
 {
     QList<Voyage> voyages;
@@ -188,6 +194,7 @@ int Voyage::getVoyageCount(QString s, QString condition)
     query.exec();
     return query.first() ? query.value(0).toInt() : 0;
 }
+
 /*
 QSqlQueryModel* Voyage::sort(QString s)
 {
@@ -204,6 +211,7 @@ QSqlQueryModel* Voyage::sort(QString s)
     return model;
 }
 */
+
 float Voyage::calculateAverageCost(QString Sdep, QString Sarr)
 {
     QSqlQuery query;

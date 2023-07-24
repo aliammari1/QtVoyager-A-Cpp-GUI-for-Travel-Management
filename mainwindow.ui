@@ -866,11 +866,11 @@ background-color:rgba(5, 24, 150);
         </font>
        </property>
        <property name="text">
-        <string>pdf</string>
+        <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>pdf.png</normaloff>pdf.png</iconset>
+        <iconset resource="assets/images/images.qrc">
+         <normaloff>:/pdf.png</normaloff>:/pdf.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1036,9 +1036,11 @@ background-color:rgba(5, 24, 150);
   <customwidget>
    <class>MyButton</class>
    <extends>QPushButton</extends>
-   <header location="global">mybutton.h</header>
+   <header location="global">assets/files/mybutton.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="assets/images/images.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -1,20 +1,25 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+
+
 #include <QMainWindow>
 #include <QLabel>
 #include <QtDebug>
 #include <QLineEdit>
-#include "voyage.h"
 #include <QGridLayout>
-#include "arduino.h"
 #include <QTextDocument>
 #include <QtCharts>
 #include <QChartView>
 #include <QLineSeries>
 #include <QPieSeries>
 #include <QPieSlice>
-#include "mybutton.h"
+
+#include "assets/files/mybutton.h"
+#include "gestionVoyages/voyage.h"
+#include "config/arduino.h"
+#include "config/connection.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
