@@ -50,7 +50,12 @@ MainWindow::MainWindow(QWidget *parent)
             lineargradx = 1;
             lineargrady = 1;
         } });
-
+    connect(ui->lineEdit_rechercher, &QLineEdit::textChanged, [=](const QString &text) {
+        table("search", text);
+    });
+    connect(ui->comboBox_sort, &QComboBox::currentTextChanged, [=](const QString &text) {
+        table("sort", text);
+    });
     timer->start(1000);
 }
 
@@ -307,63 +312,21 @@ QList<QLabel *> MainWindow::createHeadBar()
 }
 
 // Populate the table in the UI with data from the database
-void MainWindow::table()
+void MainWindow::table(QString type,QString text)
 {
-    QList<Voyage> voyages = voy.getAllVoyages();
-    int rowHeight = 30;
-    int columnWidth = 120;
+    QList<Voyage> voyages = {};
 
-    QGridLayout *layout = new QGridLayout();
-    QList<QLabel *> headerLabels = createHeadBar();
+    if (type == "" && text == "")
+        voyages = voy.getAllVoyages();
+    else if (type == "sort")
+        voyages = voy.getAllVoyagesSorted(text);
+    else if (type == "search")
+        voyages = voy.searchVoyages(text);
 
-    for (int i = 0; i < headerLabels.size(); i++)
-    {
-        layout->addWidget(headerLabels[i], 0, i);
-    }
-
-    for (int i = 0; i < voyages.size(); i++)
-    {
-        QStringList voyageData = {
-            voyages[i].getFlightref(),
-            voyages[i].getLieudep(),
-            voyages[i].getLieuarr(),
-            voyages[i].getDatedep().toString("dd/MM/yyyy"),
-            voyages[i].getDatearr().toString("dd/MM/yyyy"),
-            voyages[i].getAirline(),
-            QString::number(voyages[i].getMontant()),
-            QString::number(voyages[i].getNbper())};
-
-        for (int j = 0; j < 8; j++)
-        {
-            QLineEdit *lineEdit = new QLineEdit(voyageData[j]);
-            lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-            lineEdit->setStyleSheet("QLineEdit {"
-                                    "height: 30px;"
-                                    "}");
-            lineEdit->setReadOnly(true);
-
-            layout->addWidget(lineEdit, i + 1, j);
-        }
-    }
-
-    layout->setRowMinimumHeight(0, rowHeight);
-    layout->setHorizontalSpacing(0);
-    layout->setRowStretch(voyages.size() + 1, 1);
-    layout->setVerticalSpacing(10);
-
-    ui->scrollAreaWidgetContents->setLayout(layout);
-    ui->scrollAreaWidgetContents->layout()->deleteLater();
-}
-
-void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
-{
-    int size = 0;
-    QList<Voyage> voyages = voy.searchVoyages(arg1, &size);
     int rowHeight = 30;
     int columnWidth = 120;
 
     qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-
     QGridLayout *layout = new QGridLayout();
     QList<QLabel *> headerLabels = createHeadBar();
 
@@ -391,60 +354,33 @@ void MainWindow::on_lineEdit_rechercher_textChanged(const QString &arg1)
             lineEdit->setStyleSheet("QLineEdit {"
                                     "height: 30px;"
                                     "}");
-            lineEdit->setReadOnly(true);
+            if (j != 0)
+            {
+                lineEdit->setReadOnly(true);
+            }
 
             layout->addWidget(lineEdit, i + 1, j);
-        }
-    }
 
-    layout->setRowMinimumHeight(0, rowHeight);
-    layout->setHorizontalSpacing(0);
-    layout->setRowStretch(voyages.size() + 1, 1);
-    layout->setVerticalSpacing(10);
-
-    ui->scrollAreaWidgetContents->setLayout(layout);
-    ui->scrollAreaWidgetContents->layout()->deleteLater();
-}
-
-// This function updates the UI with the sorted list of voyages based on the selected sorting criteria
-void MainWindow::on_comboBox_sort_currentTextChanged(const QString &arg1)
-{
-    QList<Voyage> voyages = voy.getAllVoyagesSorted(arg1);
-    int rowHeight = 30;
-    int columnWidth = 120;
-
-    qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-
-    QGridLayout *layout = new QGridLayout();
-    QList<QLabel *> headerLabels = createHeadBar();
-
-    for (int i = 0; i < headerLabels.size(); i++)
-    {
-        layout->addWidget(headerLabels[i], 0, i);
-    }
-
-    for (int i = 0; i < voyages.size(); i++)
-    {
-        QStringList voyageData = {
-            voyages[i].getFlightref(),
-            voyages[i].getLieudep(),
-            voyages[i].getLieuarr(),
-            voyages[i].getDatedep().toString("dd/MM/yyyy"),
-            voyages[i].getDatearr().toString("dd/MM/yyyy"),
-            voyages[i].getAirline(),
-            QString::number(voyages[i].getMontant()),
-            QString::number(voyages[i].getNbper())};
-
-        for (int j = 0; j < 8; j++)
-        {
-            QLineEdit *lineEdit = new QLineEdit(voyageData[j]);
-            lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-            lineEdit->setStyleSheet("QLineEdit {"
-                                    "height: 30px;"
-                                    "}");
-            lineEdit->setReadOnly(true);
-
-            layout->addWidget(lineEdit, i + 1, j);
+            if (j == 7)
+            {
+                QPushButton *deleteButton = new QPushButton("Delete");
+                deleteButton->setStyleSheet("QPushButton {"
+                                            "height: 30px;"
+                                            "background-color: red;"
+                                            "color: white;"
+                                            "border: none;"
+                                            "border-radius: 5px;"
+                                            "}"
+                                            "QPushButton:hover {"
+                                            "background-color: rgb(255, 0, 0, 150);"
+                                            "}");
+                connect(deleteButton, &QPushButton::clicked, [=]()
+                        {
+                        voy.supprimer(voyageData[0]);
+                        voyageData[0];
+                        table(); });
+                layout->addWidget(deleteButton, i + 1, j + 1);
+            }
         }
     }
 

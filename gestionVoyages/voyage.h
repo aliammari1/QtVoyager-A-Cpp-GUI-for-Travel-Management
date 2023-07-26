@@ -54,7 +54,7 @@ public:
     bool searchByFlightRef(QString ref);
     QSqlQueryModel *sort(QString s);
     QList<Voyage> getAllVoyages();
-    QList<Voyage> searchVoyages(QString recher,int *size);
+    QList<Voyage> searchVoyages(QString recher);
     QList<Voyage> getAllVoyagesSorted(QString order);
     int getVoyageCount(QString s, QString condition);
     float calculateAverageCost(QString Sdep, QString Sarr);

@@ -142,8 +142,8 @@ QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
 {
     QList<Voyage> voyages;
     QSqlQuery query;
-    query.prepare("SELECT * FROM VOYAGES ORDER BY :order");
-    query.bindValue(":order", order);
+    QString sqlQuery = "SELECT * FROM VOYAGES ORDER BY " + order;
+    query.prepare(sqlQuery);
     query.exec();
     while (query.next())
     {
@@ -160,7 +160,7 @@ QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
     return voyages;
 }
 
-QList<Voyage> Voyage::searchVoyages(QString recher,int *size)
+QList<Voyage> Voyage::searchVoyages(QString recher)
 {
     QList<Voyage> Q;
     QSqlQuery query;
@@ -180,7 +180,6 @@ QList<Voyage> Voyage::searchVoyages(QString recher,int *size)
             float montant = query.value(6).toFloat();
             int nbper = query.value(7).toInt();
             Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
-            (*size)++;
         }
     }
     return Q;

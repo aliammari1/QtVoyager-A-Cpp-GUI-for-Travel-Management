@@ -1,9 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
-
-
 #include <QMainWindow>
 #include <QLabel>
 #include <QtDebug>
@@ -39,7 +36,7 @@ public:
     void style();
     void controle();
     QList<QLabel *> createHeadBar();
-    void table();
+    void table(QString type = "",QString text = "");
     void profit();
     void graphics();
 
@@ -55,11 +52,7 @@ private slots:
 
     void on_pushButton_3_clicked();
 
-    void on_comboBox_sort_currentTextChanged(const QString &arg1);
-
     void on_pushButton_clear_clicked();
-
-    void on_lineEdit_rechercher_textChanged(const QString &arg1);
 
     void on_comboBox_lieu_From_currentTextChanged(const QString &arg1);
 
@@ -68,7 +61,6 @@ private slots:
     void on_dateEdit_datedep_userDateChanged(const QDate &date);
 
     void update_label();
-
 private:
     Ui::MainWindow *ui;
     Voyage voy;
