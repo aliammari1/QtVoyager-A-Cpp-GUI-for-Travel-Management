@@ -657,9 +657,9 @@ background-color:rgba(5, 24, 150);
       <property name="geometry">
        <rect>
         <x>410</x>
-        <y>470</y>
-        <width>460</width>
-        <height>221</height>
+        <y>440</y>
+        <width>531</width>
+        <height>261</height>
        </rect>
       </property>
       <property name="layoutDirection">
@@ -1016,6 +1016,26 @@ background-color:rgba(5, 24, 150);
       <property name="horizontalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_chart">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>460</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>LIEUARR</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>LIEUDEP</string>
+       </property>
+      </item>
      </widget>
     </widget>
    </widget>

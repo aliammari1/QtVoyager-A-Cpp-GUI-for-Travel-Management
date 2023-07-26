@@ -56,7 +56,7 @@ public:
     QList<Voyage> getAllVoyages();
     QList<Voyage> searchVoyages(QString recher);
     QList<Voyage> getAllVoyagesSorted(QString order);
-    int getVoyageCount(QString s, QString condition);
+    QList<int> getVoyageCount(QString s,QList<QString>& v);
     float calculateAverageCost(QString Sdep, QString Sarr);
 };
 

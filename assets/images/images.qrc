@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>pdf.png</file>
         <file>preview.png</file>
+        <file>plane.png</file>
     </qresource>
 </RCC>

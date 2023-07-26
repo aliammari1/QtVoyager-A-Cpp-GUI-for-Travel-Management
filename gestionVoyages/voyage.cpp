@@ -185,13 +185,26 @@ QList<Voyage> Voyage::searchVoyages(QString recher)
     return Q;
 }
 
-int Voyage::getVoyageCount(QString s, QString condition)
+QList<int> Voyage::getVoyageCount(QString s,QList<QString>& v)
 {
-    QSqlQuery query;
-    query.prepare("SELECT COUNT(" + s + ") FROM VOYAGES WHERE " + s + " = :condition");
-    query.bindValue(":condition", condition);
+    QList<int> chartData;
+    QSqlQuery query, query1;
+    QString condition = "";
+    query.prepare("SELECT " + s + "  FROM VOYAGES");
     query.exec();
-    return query.first() ? query.value(0).toInt() : 0;
+    while(query.next())
+    {
+        qDebug() << query.value(0).toString();
+        condition = query.value(0).toString();
+        v.append(condition);
+        query1.prepare("SELECT COUNT(" + s + ")  FROM VOYAGES WHERE " + s + " = :condition");
+        query1.bindValue(":condition", condition);
+        query1.exec();
+        query1.first();
+        chartData.append(query1.value(0).toInt());
+    }
+    qDebug() << chartData;
+    return chartData;
 }
 
 /*

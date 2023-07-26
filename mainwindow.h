@@ -12,6 +12,7 @@
 #include <QLineSeries>
 #include <QPieSeries>
 #include <QPieSlice>
+#include <QGraphicsColorizeEffect>
 
 #include "assets/files/mybutton.h"
 #include "gestionVoyages/voyage.h"
@@ -32,7 +33,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void charts();
+    void charts(QString type = "");
     void style();
     void controle();
     QList<QLabel *> createHeadBar();

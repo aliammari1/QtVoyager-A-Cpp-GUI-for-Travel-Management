@@ -19,12 +19,12 @@ MainWindow::MainWindow(QWidget *parent)
     }
     QObject::connect(A.getserial(), SIGNAL(readyRead()), this, SLOT(update_label())); // Launch serial communication
 
-    table();    // Initialize table
-    style();    // Set style
-    controle(); // Control input
-    charts();   // Initialize charts
-    profit();   // Calculate profit
-    graphics(); // Set graphics
+    table();                                   // Initialize table
+    style();                                   // Set style
+    controle();                                // Control input
+    charts(ui->comboBox_chart->currentText()); // Initialize charts
+    profit();                                  // Calculate profit
+    graphics();                                // Set graphics
     //---------------initialisation de place de TabWidget------------------------------
     ui->tabWidget->setGeometry(QRect(0, 0, 1600, 1000));
     //---------------setting PushButton initialization color------------------------------
@@ -50,12 +50,13 @@ MainWindow::MainWindow(QWidget *parent)
             lineargradx = 1;
             lineargrady = 1;
         } });
-    connect(ui->lineEdit_rechercher, &QLineEdit::textChanged, [=](const QString &text) {
-        table("search", text);
-    });
-    connect(ui->comboBox_sort, &QComboBox::currentTextChanged, [=](const QString &text) {
-        table("sort", text);
-    });
+    connect(ui->lineEdit_rechercher, &QLineEdit::textChanged, [=](const QString &text)
+            { table("search", text); });
+    connect(ui->comboBox_sort, &QComboBox::currentTextChanged, [=](const QString &text)
+            { table("sort", text); });
+    connect(ui->comboBox_chart, &QComboBox::currentTextChanged, [=](const QString &text)
+            { charts(text); });
+
     timer->start(1000);
 }
 
@@ -81,7 +82,7 @@ void MainWindow::on_pushButton_ajouter_clicked()
     {
         profit();
         table();
-        charts();
+        charts(ui->comboBox_chart->currentText());
         QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Ajout effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
@@ -97,7 +98,7 @@ void MainWindow::on_pushButton_delete_clicked()
     {
         profit();
         table();
-        charts();
+        charts(ui->comboBox_chart->currentText());
         QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("Suppression effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
     else
@@ -121,7 +122,7 @@ void MainWindow::on_pushButton_update_clicked()
     if (test)
     {
         profit();
-        charts();
+        charts(ui->comboBox_chart->currentText());
         table();
         QMessageBox::information(nullptr, QObject::tr("OK"), QObject::tr("update effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
     }
@@ -234,19 +235,19 @@ void MainWindow::on_pushButton_3_clicked()
 }
 
 // Generate a pie chart of voyages by departure location
-void MainWindow::charts()
+void MainWindow::charts(QString type)
 {
     qDeleteAll(ui->widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-
-    QPieSeries *series = new QPieSeries();
-    series->append("Tunisia", voy.getVoyageCount("LIEUDEP", "Tunisia"));
-    series->append("France", voy.getVoyageCount("LIEUDEP", "France"));
-    series->append("United Kingdom", voy.getVoyageCount("LIEUDEP", "United Kingdom"));
-    series->setLabelsVisible();
-    series->setPieSize(300);
+    QList<QString> labels;
+    QPieSeries *seriesDep = new QPieSeries();
+    QList<int> numbers = voy.getVoyageCount(type, labels);
+    for (int i = 0; i < numbers.size(); i++)
+        seriesDep->append(labels[i], numbers[i]);
+    seriesDep->setLabelsVisible();
+    seriesDep->setPieSize(300);
 
     QChart *chart = new QChart();
-    chart->addSeries(series);
+    chart->addSeries(seriesDep);
     chart->setTitle("Number of flights by country");
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignRight);
@@ -258,6 +259,7 @@ void MainWindow::charts()
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(chartView);
     ui->widget->setLayout(layout);
+    ui->widget->layout()->deleteLater();
 }
 
 // Apply custom styles to the UI
@@ -312,7 +314,7 @@ QList<QLabel *> MainWindow::createHeadBar()
 }
 
 // Populate the table in the UI with data from the database
-void MainWindow::table(QString type,QString text)
+void MainWindow::table(QString type, QString text)
 {
     QList<Voyage> voyages = {};
 
@@ -324,7 +326,6 @@ void MainWindow::table(QString type,QString text)
         voyages = voy.searchVoyages(text);
 
     int rowHeight = 30;
-    int columnWidth = 120;
 
     qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
     QGridLayout *layout = new QGridLayout();
@@ -361,7 +362,7 @@ void MainWindow::table(QString type,QString text)
 
             layout->addWidget(lineEdit, i + 1, j);
 
-            if (j == 7)
+            /*if (j == 7)
             {
                 QPushButton *deleteButton = new QPushButton("Delete");
                 deleteButton->setStyleSheet("QPushButton {"
@@ -380,7 +381,7 @@ void MainWindow::table(QString type,QString text)
                         voyageData[0];
                         table(); });
                 layout->addWidget(deleteButton, i + 1, j + 1);
-            }
+            }*/
         }
     }
 
@@ -443,38 +444,46 @@ void MainWindow::update_label()
 }
 
 // This function creates a graphics scene and adds a plane and circles to it, then animates the plane's movement
+
 void MainWindow::graphics()
 {
-    QGraphicsScene *scene;
-    QGraphicsTextItem *text;
-    QGraphicsPixmapItem *pixmap;
-    QGraphicsEllipseItem *circle[50];
-    scene = new QGraphicsScene(this);
+    // Create a new graphics scene and set it as the scene for the graphics view
+    QGraphicsScene *scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
+
+    // Set the background color of the scene
     scene->setBackgroundBrush(QBrush(QColor(5, 24, 150)));
-    pixmap = scene->addPixmap(QPixmap("C:\\Users\\aliam\\OneDrive\\Images\\f1.png"));
-    pixmap->setPos(100, 0);
+
+    // Add a pixmap item to the scene and set its position and opacity
+    QGraphicsPixmapItem *plane = scene->addPixmap(QPixmap(":/plane.png").scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation).transformed(QTransform().rotate(180)));
+    plane->setPos(220, 5);
+    plane->setOpacity(1);
+
+    // Add 50 circle items to the scene and set their positions
+    QGraphicsEllipseItem *circles[50];
     int x = 10;
     for (int i = 0; i < 50; i++)
     {
-        circle[i] = scene->addEllipse(-520, 0, 10, 10, QPen(Qt::white), Qt::white);
-        circle[i]->setPos(QPoint(-10 - x, ui->graphicsView->geometry().height() / 2 - 6));
+        circles[i] = scene->addEllipse(0, 0, 10, 10, QPen(Qt::white), Qt::white);
+        circles[i]->setPos(QPoint(-ui->graphicsView->geometry().width() / 2 - x, ui->graphicsView->geometry().height() / 2 - 50));
         x -= 20;
     }
-    text = scene->addText("Tayerni", QFont("Outfit", 18));
-    text->setDefaultTextColor(QColor(255, 255, 255));
-    text->setPos(QPoint(-ui->graphicsView->geometry().width() / 2, 0));
 
-    QTimer *t = new QTimer();
-    connect(t, &QTimer::timeout, [=]()
+    // Add a text item to the scene and set its position and font
+    QGraphicsTextItem *text = scene->addText("Tayerni", QFont("Outfit", 18));
+    text->setDefaultTextColor(QColor(255, 255, 255));
+    text->setPos(QPoint(-ui->graphicsView->geometry().width() / 2, -20));
+
+    // Create a timer that animates the plane item across the scene
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [=]()
             {
-                    QTimeLine *timer = new QTimeLine(5000);
-                    QGraphicsItemAnimation *animation_plane = new QGraphicsItemAnimation();
-                        animation_plane->setItem(pixmap);
-                        animation_plane->setTimeLine(timer);
-                        animation_plane->setTranslationAt(0,100,0);
-                        animation_plane->setTranslationAt(0.5,-800,00);
-                        animation_plane->setTranslationAt(1,100,0);
-                        timer->start(); });
-    t->start(5000);
+        QTimeLine *timeLine = new QTimeLine(5000);
+        QGraphicsItemAnimation *animation = new QGraphicsItemAnimation();
+        animation->setItem(plane);
+        animation->setTimeLine(timeLine);
+        animation->setTranslationAt(0, 220, 0);
+        animation->setTranslationAt(1, -800, 0); // Only move the plane in one direction
+        timeLine->start(); });
+    timer->start(5000);
 }
