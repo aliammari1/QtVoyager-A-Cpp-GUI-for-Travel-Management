@@ -46,18 +46,15 @@ public:
     void setNbper(int n) { nbper = n; }
 
     // CRUD
-    bool ajouter();
-    QSqlQueryModel *afficher();
-    bool supprimer(QString);
-    bool update(QString ref);
-
-    bool searchByFlightRef(QString ref);
-    QSqlQueryModel *sort(QString s);
-    QList<Voyage> getAllVoyages();
-    QList<Voyage> searchVoyages(QString recher);
-    QList<Voyage> getAllVoyagesSorted(QString order);
-    QList<int> getVoyageCount(QString s,QList<QString>& v);
-    float calculateAverageCost(QString Sdep, QString Sarr);
+    bool ajouter() const;
+    bool supprimer(QString) const;
+    bool update(QString ref) const;
+    bool searchByFlightRef(QString ref) const;
+    QList<Voyage> getAllVoyages() const;
+    QList<Voyage> searchVoyages(QString recher) const;
+    QList<Voyage> getAllVoyagesSorted(QString order) const;
+    QList<int> getVoyageCount(QString s,QList<QString>& v) const;
+    float calculateAverageCost(QString Sdep, QString Sarr) const;
 };
 
 #endif // VOYAGE_H

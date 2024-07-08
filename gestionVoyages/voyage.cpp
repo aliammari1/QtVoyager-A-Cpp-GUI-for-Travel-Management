@@ -13,7 +13,7 @@ Voyage::Voyage(QString flightref, QString lieudep, QString lieuarr, QDate datede
 }
 
 //---------------------------create voyage----------------------------------
-bool Voyage::ajouter()
+bool Voyage::ajouter() const
 {
 
     QSqlQuery query;
@@ -33,7 +33,7 @@ bool Voyage::ajouter()
 }
 
 //---------------------------voyage delete-----------------------------------
-bool Voyage::supprimer(QString ref)
+bool Voyage::supprimer(QString ref) const
 {
     QSqlQuery query;
     bool t = searchByFlightRef(ref);
@@ -47,7 +47,7 @@ bool Voyage::supprimer(QString ref)
 }
 
 //---------------------------voyage update-----------------------------------
-bool Voyage::update(QString ref)
+bool Voyage::update(QString ref) const
 {
     QSqlQuery query;
     bool t = searchByFlightRef(ref);
@@ -68,7 +68,7 @@ bool Voyage::update(QString ref)
 }
 
 //----------------------------------voyage search---------------------------------------
-bool Voyage::searchByFlightRef(QString ref)
+bool Voyage::searchByFlightRef(QString ref) const
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM VOYAGES WHERE FLIGHTREF= '" + ref + "'");
@@ -87,7 +87,7 @@ bool Voyage::searchByFlightRef(QString ref)
     return t;
 }
 
-QList<Voyage> Voyage::getAllVoyages()
+QList<Voyage> Voyage::getAllVoyages() const
 {
     QList<Voyage> voyages;
     QSqlQuery query("SELECT * FROM VOYAGES");
@@ -98,7 +98,7 @@ QList<Voyage> Voyage::getAllVoyages()
     return voyages;
 }
 
-QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
+QList<Voyage> Voyage::getAllVoyagesSorted(QString order) const
 {
     QList<Voyage> voyages;
     QSqlQuery query;
@@ -112,7 +112,7 @@ QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
     return voyages;
 }
 
-QList<Voyage> Voyage::searchVoyages(QString recher)
+QList<Voyage> Voyage::searchVoyages(QString recher) const
 {
     QList<Voyage> Q;
     QSqlQuery query;
@@ -129,10 +129,11 @@ QList<Voyage> Voyage::searchVoyages(QString recher)
     return Q;
 }
 
-QList<int> Voyage::getVoyageCount(QString s,QList<QString>& v)
+QList<int> Voyage::getVoyageCount(QString s,QList<QString>& v) const
 {
     QList<int> chartData;
-    QSqlQuery query, query1;
+    QSqlQuery query;
+    QSqlQuery query1;
     QString condition = "";
     query.prepare("SELECT " + s + "  FROM VOYAGES");
     query.exec();
@@ -152,7 +153,7 @@ QList<int> Voyage::getVoyageCount(QString s,QList<QString>& v)
 }
 
 
-float Voyage::calculateAverageCost(QString Sdep, QString Sarr)
+float Voyage::calculateAverageCost(QString Sdep, QString Sarr) const
 {
     QSqlQuery query;
     query.prepare("SELECT AVG(MONTANT) FROM VOYAGES WHERE LIEUDEP = :dep AND LIEUARR = :arr");
