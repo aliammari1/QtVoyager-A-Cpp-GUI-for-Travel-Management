@@ -1,6 +1,6 @@
 #include "arduino.h"
 
-Arduino::Arduino() : data(""), arduino_port_name(""), arduino_is_available(false), serial(new QSerialPort)
+Arduino::Arduino() : arduino_port_name(""), arduino_is_available(false), data(""), serial(new QSerialPort)
 {
 }
 

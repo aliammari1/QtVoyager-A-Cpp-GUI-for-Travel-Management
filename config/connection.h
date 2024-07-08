@@ -9,7 +9,7 @@ class Connection
     QSqlDatabase db;
 
 public:
-    Connection();
+    Connection() = default;
     bool createconnection();
     void closeConnection();
 };

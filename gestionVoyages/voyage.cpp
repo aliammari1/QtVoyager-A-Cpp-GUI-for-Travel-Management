@@ -93,15 +93,7 @@ QList<Voyage> Voyage::getAllVoyages()
     QSqlQuery query("SELECT * FROM VOYAGES");
     while (query.next())
     {
-        QString flightref = query.value(0).toString();
-        QString lieudep = query.value(1).toString();
-        QString lieuarr = query.value(2).toString();
-        QDate datedep = query.value(3).toDate();
-        QDate datearr = query.value(4).toDate();
-        QString airline = query.value(5).toString();
-        float montant = query.value(6).toFloat();
-        int nbper = query.value(7).toInt();
-        voyages.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
+        voyages.append(Voyage(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(), query.value(3).toDate(), query.value(4).toDate(), query.value(5).toString(), query.value(6).toFloat(), query.value(7).toInt()));
     }
     return voyages;
 }
@@ -115,15 +107,7 @@ QList<Voyage> Voyage::getAllVoyagesSorted(QString order)
     query.exec();
     while (query.next())
     {
-        QString flightref = query.value(0).toString();
-        QString lieudep = query.value(1).toString();
-        QString lieuarr = query.value(2).toString();
-        QDate datedep = query.value(3).toDate();
-        QDate datearr = query.value(4).toDate();
-        QString airline = query.value(5).toString();
-        float montant = query.value(6).toFloat();
-        int nbper = query.value(7).toInt();
-        voyages.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
+        voyages.append(Voyage(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(), query.value(3).toDate(), query.value(4).toDate(), query.value(5).toString(), query.value(6).toFloat(), query.value(7).toInt()));
     }
     return voyages;
 }
@@ -139,15 +123,7 @@ QList<Voyage> Voyage::searchVoyages(QString recher)
     {
         while (query.next())
         {
-            QString flightref = query.value(0).toString();
-            QString lieudep = query.value(1).toString();
-            QString lieuarr = query.value(2).toString();
-            QDate datedep = query.value(3).toDate();
-            QDate datearr = query.value(4).toDate();
-            QString airline = query.value(5).toString();
-            float montant = query.value(6).toFloat();
-            int nbper = query.value(7).toInt();
-            Q.append(Voyage(flightref, lieudep, lieuarr, datedep, datearr, airline, montant, nbper));
+            Q.append(Voyage(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(), query.value(3).toDate(), query.value(4).toDate(), query.value(5).toString(), query.value(6).toFloat(), query.value(7).toInt()));
         }
     }
     return Q;
@@ -175,22 +151,6 @@ QList<int> Voyage::getVoyageCount(QString s,QList<QString>& v)
     return chartData;
 }
 
-/*
-QSqlQueryModel* Voyage::sort(QString s)
-{
-    QSqlQueryModel* model = new QSqlQueryModel();
-    model->setQuery("SELECT * FROM VOYAGES ORDER BY " + s);
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("flightref"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("lieudep"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("lieuarr"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("datedep"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("datearr"));
-    model->setHeaderData(5, Qt::Horizontal, QObject::tr("airline"));
-    model->setHeaderData(6, Qt::Horizontal, QObject::tr("montant"));
-    model->setHeaderData(7, Qt::Horizontal, QObject::tr("nbper"));
-    return model;
-}
-*/
 
 float Voyage::calculateAverageCost(QString Sdep, QString Sarr)
 {
