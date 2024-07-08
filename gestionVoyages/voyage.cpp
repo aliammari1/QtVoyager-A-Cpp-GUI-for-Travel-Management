@@ -2,28 +2,14 @@
 
 //------------------------------constructeur voyage sans arguments---------------------------------------
 Voyage::Voyage()
+    : flightref(""), lieudep(""), lieuarr(""), airline(""), datedep(QDate::currentDate()), datearr(QDate::currentDate()), montant(0.0), nbper(0)
 {
-    flightref = "";
-    lieudep = "";
-    lieuarr = "";
-    airline = "";
-    datedep = QDate::currentDate();
-    datearr = QDate::currentDate();
-    montant = 0.0;
-    nbper = 0;
 }
 
 //-------------------------------constructeur voyage avec des arguments----------------------------------
 Voyage::Voyage(QString flightref, QString lieudep, QString lieuarr, QDate datedep, QDate datearr, QString airline, float montant, int nbper)
+    : flightref(flightref), lieudep(lieudep), lieuarr(lieuarr), airline(airline), datedep(datedep), datearr(datearr), montant(montant), nbper(nbper)
 {
-    this->flightref = flightref;
-    this->lieudep = lieudep;
-    this->lieuarr = lieuarr;
-    this->airline = airline;
-    this->datedep = datedep;
-    this->datearr = datearr;
-    this->montant = montant;
-    this->nbper = nbper;
 }
 
 //---------------------------create voyage----------------------------------
@@ -45,24 +31,6 @@ bool Voyage::ajouter()
     query.bindValue(":nbper", n);
     return query.exec();
 }
-
-//--------------------------------voyage showing all table cells--------------------------------------
-/*
-QSqlQueryModel * Voyage::afficher()
-{
-    QSqlQueryModel * model = new QSqlQueryModel();
-    model->setQuery("SELECT * FROM VOYAGES");
-    model->setHeaderData(0,Qt::Horizontal,QObject::tr("flightref"));
-    model->setHeaderData(1,Qt::Horizontal,QObject::tr("lieudep"));
-    model->setHeaderData(2,Qt::Horizontal,QObject::tr("lieuarr"));
-    model->setHeaderData(3,Qt::Horizontal,QObject::tr("datedep"));
-    model->setHeaderData(4,Qt::Horizontal,QObject::tr("datearr"));
-    model->setHeaderData(5,Qt::Horizontal,QObject::tr("airline"));
-    model->setHeaderData(6,Qt::Horizontal,QObject::tr("montant"));
-    model->setHeaderData(7,Qt::Horizontal,QObject::tr("nbper"));
-    return model;
-}
-*/
 
 //---------------------------voyage delete-----------------------------------
 bool Voyage::supprimer(QString ref)

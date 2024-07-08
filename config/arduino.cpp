@@ -1,11 +1,7 @@
 #include "arduino.h"
 
-Arduino::Arduino()
+Arduino::Arduino() : data(""), arduino_port_name(""), arduino_is_available(false), serial(new QSerialPort)
 {
-    data = "";
-    arduino_port_name = "";
-    arduino_is_available = false;
-    serial = new QSerialPort;
 }
 
 QString Arduino::getarduino_port_name()

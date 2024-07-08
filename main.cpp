@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     Connection c;
     bool test = c.createconnection();
     MainWindow w;
-    if (test)
+    if (!test)
     {
         w.show();
         // a.setOverrideCursor(QCursor(QPixmap("C:\\Users\\aliam\\OneDrive\\Images\\color.png")));

@@ -11,11 +11,11 @@ class MyButton : public QPushButton
     Q_PROPERTY(QColor color READ GetColor WRITE SetColor)
 
 public:
-    explicit MyButton(QWidget *parent = 0);
+    explicit MyButton(QWidget *parent = nullptr);
 
     void SetColor(const QColor &color);
     const QColor &GetColor() const;
-    bool eventFilter(QObject *obj, QEvent *e);
+    bool eventFilter(QObject *obj, QEvent *e) override;
 
 private:
     QColor m_currentColor;

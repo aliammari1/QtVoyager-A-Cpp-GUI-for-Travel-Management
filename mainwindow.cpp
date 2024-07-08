@@ -28,16 +28,19 @@ MainWindow::MainWindow(QWidget *parent)
     //---------------initialisation de place de TabWidget------------------------------
     ui->tabWidget->setGeometry(QRect(0, 0, 1600, 1000));
     //---------------setting PushButton initialization color------------------------------
-    for (auto &button : std::array<MyButton *, 5>{ui->pushButton_ajouter, ui->pushButton_clear, ui->pushButton_update, ui->pushButton_Search, ui->pushButton_delete})
+    QVector<MyButton*> buttons = {ui->pushButton_ajouter, ui->pushButton_clear, ui->pushButton_update, ui->pushButton_Search, ui->pushButton_delete};
+    for (auto &button : buttons)
     {
         button->SetColor(QColor(255, 255, 255));
     }
+
     ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
     QTimer *timer = new QTimer();
 
     connect(timer, &QTimer::timeout, [=]()
             {
-        for (auto& groupBox : std::array<QGroupBox*,4>{ui->groupBox, ui->Information_Box, ui->groupBox_2, ui->groupBox_3})
+        QVector<QGroupBox*> groupBoxs = {ui->groupBox, ui->Information_Box, ui->groupBox_2, ui->groupBox_3};
+        for (auto& groupBox : groupBoxs)
         {
             groupBox->setStyleSheet("QGroupBox {"      "background-color: qlineargradient(spread:pad, x1:0.349, y1:0.336364, x2:"+QString::number(lineargradx)+", y2:"+QString::number(lineargrady)+", stop:0 rgba(5, 24, 122, 200), stop:1 rgba(5, 24, 255, 125));"      "border-radius:20px;"      "color:white;"      "}");
         };
