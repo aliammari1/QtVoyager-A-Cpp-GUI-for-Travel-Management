@@ -15,8 +15,12 @@
 
 class Voyage
 {
-    QString flightref, lieudep, lieuarr, airline;
-    QDate datedep, datearr;
+    QString flightref;
+    QString lieudep;
+    QString lieuarr;
+    QString airline;
+    QDate datedep;
+    QDate datearr;
     float montant;
     int nbper;
 
@@ -26,14 +30,14 @@ public:
     Voyage(QString, QString, QString, QDate, QDate, QString, float, int);
 
     // Getters
-    QString getFlightref() { return flightref; }
-    QString getLieudep() { return lieudep; }
-    QString getLieuarr() { return lieuarr; }
-    QString getAirline() { return airline; }
-    QDate getDatedep() { return datedep; }
-    QDate getDatearr() { return datearr; }
-    float getMontant() { return montant; }
-    int getNbper() { return nbper; }
+    QString getFlightref() const { return flightref; }
+    QString getLieudep() const { return lieudep; }
+    QString getLieuarr() const { return lieuarr; }
+    QString getAirline() const { return airline; }
+    QDate getDatedep() const { return datedep; }
+    QDate getDatearr() const { return datearr; }
+    float getMontant() const { return montant; }
+    int getNbper() const { return nbper; }
 
     // Setters
     void setFlightref(QString f) { flightref = f; }
