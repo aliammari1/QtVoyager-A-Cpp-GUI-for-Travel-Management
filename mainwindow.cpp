@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    
+    int ret = A.connect_arduino();
     switch (ret)
     {
     case 0:
@@ -21,14 +21,15 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Unknown return value: " << ret;
         break;
     }
-    
 
-    
-    
-    
-    
-    
-    
+    QObject::connect(A.getserial(), SIGNAL(readyRead()), this, SLOT(update_label())); // Launch serial communication
+
+    table();                                  
+    style();                                  
+    controle();                               
+    charts(ui->comboBox_chart->currentText());
+    profit();                                 
+    graphics();                               
     
     ui->tabWidget->setGeometry(QRect(0, 0, 1600, 1000));
     
@@ -224,7 +225,7 @@ void MainWindow::on_pushButton_3_clicked()
          "</body>"
          "</html>";
     doc.setHtml(h);
-    
+    doc.setPageSize(printer.pageRect().size()); // This is necessary if you want to hide the page number
     doc.print(&printer);
     QDesktopServices::openUrl(QUrl::fromLocalFile("voyage.pdf"));
 }
