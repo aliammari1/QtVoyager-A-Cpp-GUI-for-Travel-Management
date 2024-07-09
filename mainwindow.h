@@ -67,8 +67,8 @@ private:
     Voyage voy;
     QByteArray data;
     Arduino A;
-    float lineargradx = 1;
-    float lineargrady = 1;
+    double lineargradx = 1;
+    double lineargrady = 1;
 };
 
 #endif // MAINWINDOW_H

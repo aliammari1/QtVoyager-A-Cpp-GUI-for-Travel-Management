@@ -74,3 +74,6 @@ Thumbs.db
 
 # folders
 .vscode
+
+GestionDeVoyages
+compile_commands.json

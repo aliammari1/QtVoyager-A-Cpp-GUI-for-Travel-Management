@@ -1,18 +1,18 @@
 #include "voyage.h"
 
-//------------------------------constructeur voyage sans arguments---------------------------------------
+
 Voyage::Voyage()
     : flightref(""), lieudep(""), lieuarr(""), airline(""), datedep(QDate::currentDate()), datearr(QDate::currentDate()), montant(0.0), nbper(0)
 {
 }
 
-//-------------------------------constructeur voyage avec des arguments----------------------------------
+
 Voyage::Voyage(QString flightref, QString lieudep, QString lieuarr, QDate datedep, QDate datearr, QString airline, float montant, int nbper)
     : flightref(flightref), lieudep(lieudep), lieuarr(lieuarr), airline(airline), datedep(datedep), datearr(datearr), montant(montant), nbper(nbper)
 {
 }
 
-//---------------------------create voyage----------------------------------
+
 bool Voyage::ajouter() const
 {
 
@@ -32,7 +32,7 @@ bool Voyage::ajouter() const
     return query.exec();
 }
 
-//---------------------------voyage delete-----------------------------------
+
 bool Voyage::supprimer(QString ref) const
 {
     QSqlQuery query;
@@ -46,7 +46,7 @@ bool Voyage::supprimer(QString ref) const
     return t;
 }
 
-//---------------------------voyage update-----------------------------------
+
 bool Voyage::update(QString ref) const
 {
     QSqlQuery query;
@@ -67,24 +67,12 @@ bool Voyage::update(QString ref) const
     return t;
 }
 
-//----------------------------------voyage search---------------------------------------
+
 bool Voyage::searchByFlightRef(QString ref) const
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM VOYAGES WHERE FLIGHTREF= '" + ref + "'");
-    query.exec();
-    bool t = query.first();
-    if (t)
-    {
-        lieudep = query.value(1).toString();
-        lieuarr = query.value(2).toString();
-        datedep = query.value(3).toDate();
-        datearr = query.value(4).toDate();
-        airline = query.value(5).toString();
-        montant = query.value(6).toFloat();
-        nbper = query.value(7).toInt();
-    }
-    return t;
+    return query.exec();
 }
 
 QList<Voyage> Voyage::getAllVoyages() const

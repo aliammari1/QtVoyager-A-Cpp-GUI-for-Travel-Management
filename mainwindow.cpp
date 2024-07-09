@@ -5,29 +5,33 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    int ret = A.connect_arduino(); // Connect to Arduino
+    
     switch (ret)
     {
-    case (0):
+    case 0:
         qDebug() << "arduino is available and connected to : " << A.getarduino_port_name();
         break;
-    case (1):
+    case 1:
         qDebug() << "arduino is available but not connected to :" << A.getarduino_port_name();
         break;
-    case (-1):
+    case -1:
         qDebug() << "arduino is not available";
+        break;
+    default:
+        qDebug() << "Unknown return value: " << ret;
+        break;
     }
-    QObject::connect(A.getserial(), SIGNAL(readyRead()), this, SLOT(update_label())); // Launch serial communication
+    
 
-    table();                                   // Initialize table
-    style();                                   // Set style
-    controle();                                // Control input
-    charts(ui->comboBox_chart->currentText()); // Initialize charts
-    profit();                                  // Calculate profit
-    graphics();                                // Set graphics
-    //---------------initialisation de place de TabWidget------------------------------
+    
+    
+    
+    
+    
+    
+    
     ui->tabWidget->setGeometry(QRect(0, 0, 1600, 1000));
-    //---------------setting PushButton initialization color------------------------------
+    
     QVector<MyButton*> buttons = {ui->pushButton_ajouter, ui->pushButton_clear, ui->pushButton_update, ui->pushButton_Search, ui->pushButton_delete};
     for (auto &button : buttons)
     {
@@ -35,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
-    QTimer *timer = new QTimer();
+    auto *timer = new QTimer();
 
     connect(timer, &QTimer::timeout, [=]()
             {
@@ -68,7 +72,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// Add a new voyage to the database
+
 void MainWindow::on_pushButton_ajouter_clicked()
 {
     QString flightref = ui->lineEdit_flightref->text();
@@ -92,7 +96,7 @@ void MainWindow::on_pushButton_ajouter_clicked()
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Ajout non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
 
-// Delete a voyage from the database
+
 void MainWindow::on_pushButton_delete_clicked()
 {
     QString ref = ui->lineEdit_delete->text();
@@ -108,7 +112,7 @@ void MainWindow::on_pushButton_delete_clicked()
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("Suppression non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
 
-// Update a voyage in the database
+
 void MainWindow::on_pushButton_update_clicked()
 {
     QString ref = ui->lineEdit_flightref->text();
@@ -133,24 +137,23 @@ void MainWindow::on_pushButton_update_clicked()
         QMessageBox::critical(nullptr, QObject::tr("Not OK"), QObject::tr("update non effectué.\nClick Cancel to exit."), QMessageBox::Cancel);
 }
 
-// Control input
+
 void MainWindow::controle()
 {
     QRegularExpression rx("\\b[a-zA-Z0-9]{1,8}\\b");
     ui->lineEdit_flightref->setValidator(new QRegularExpressionValidator(rx, this));
-    // ui->lineEdit_flightref->setInputMask("NNNNNNNN");
     ui->lineEdit_nbper->setValidator(new QIntValidator(0, 9999, this));
     ui->lineEdit_montant->setValidator(new QDoubleValidator(0, 99999999, 2, this));
 }
 
-// Update the date of arrival when the date of departure is changed
+
 void MainWindow::on_dateEdit_datedep_userDateChanged(const QDate &date)
 {
     ui->dateEdit_datearr->setDate(date);
     ui->dateEdit_datearr->setMinimumDate(date);
 }
 
-// Search for a voyage by flight reference
+
 void MainWindow::on_pushButton_Search_clicked()
 {
     if (voy.searchByFlightRef(ui->lineEdit_flightref->text()) && !ui->lineEdit_flightref->text().isEmpty())
@@ -170,23 +173,12 @@ void MainWindow::on_pushButton_Search_clicked()
                               QMessageBox::Cancel);
 }
 
-// Generate a PDF file of all voyages and open it
+
 void MainWindow::on_pushButton_3_clicked()
 {
-    /*
-    QPrinter printer;
-    printer.setPaperSize(QPrinter::A4);
-    printer.setOrientation(QPrinter::Landscape);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName("fichier.pdf");
-    QPainter painter;
-    painter.begin(&printer);
-    ui->tableView->render(&painter,QPoint(30,30));
-    painter.end();
-    */
     QPrinter printer(QPrinter::ScreenResolution);
-    printer.setPaperSize(QPrinter::A4);
-    printer.setOrientation(QPrinter::Landscape);
+    printer.setPageSize(QPageSize::A4);
+    printer.setPageOrientation(QPageLayout::Landscape);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName("voyage.pdf");
     QTextDocument doc;
@@ -206,25 +198,25 @@ void MainWindow::on_pushButton_3_clicked()
         "<th>montant</th>"
         "<th>nbper</th>"
         "</tr>";
-    for (int it = 0; it < V.size(); it++)
+    for (const auto& voyage : V)
     {
         h += "<tr>"
              "<td  align='center'>" +
-             V[it].getFlightref() + "</td>"
+             voyage.getFlightref() + "</td>"
                                     "<td  align='center'>" +
-             V[it].getLieudep() + "</td>"
+             voyage.getLieudep() + "</td>"
                                   "<td  align='center'>" +
-             V[it].getLieuarr() + "</td>"
+             voyage.getLieuarr() + "</td>"
                                   "<td  align='center'>" +
-             V[it].getDatearr().toString("dd/MM/yyyy") + "</td>"
+             voyage.getDatearr().toString("dd/MM/yyyy") + "</td>"
                                                          "<td  align='center'>" +
-             V[it].getDatedep().toString("dd/MM/yyyy") + "</td>"
+             voyage.getDatedep().toString("dd/MM/yyyy") + "</td>"
                                                          "<td  align='center'>" +
-             V[it].getAirline() + "</td>"
+             voyage.getAirline() + "</td>"
                                   "<td  align='center'>" +
-             QString::number(V[it].getMontant()) + "</td>"
+             QString::number(voyage.getMontant()) + "</td>"
                                                    "<td  align='center'>" +
-             QString::number(V[it].getNbper()) + "</td>"
+             QString::number(voyage.getNbper()) + "</td>"
                                                  "</tr>";
     }
 
@@ -232,40 +224,40 @@ void MainWindow::on_pushButton_3_clicked()
          "</body>"
          "</html>";
     doc.setHtml(h);
-    doc.setPageSize(printer.pageRect().size()); // This is necessary if you want to hide the page number
+    
     doc.print(&printer);
     QDesktopServices::openUrl(QUrl::fromLocalFile("voyage.pdf"));
 }
 
-// Generate a pie chart of voyages by departure location
+
 void MainWindow::charts(QString type)
 {
     qDeleteAll(ui->widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
     QList<QString> labels;
-    QPieSeries *seriesDep = new QPieSeries();
+    auto seriesDep = new QPieSeries();
     QList<int> numbers = voy.getVoyageCount(type, labels);
     for (int i = 0; i < numbers.size(); i++)
         seriesDep->append(labels[i], numbers[i]);
     seriesDep->setLabelsVisible();
     seriesDep->setPieSize(300);
 
-    QChart *chart = new QChart();
+    auto chart = new QChart();
     chart->addSeries(seriesDep);
     chart->setTitle("Number of flights by country");
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignRight);
 
-    QChartView *chartView = new QChartView(chart);
+    auto chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->resize(460, 230);
 
-    QHBoxLayout *layout = new QHBoxLayout();
+    auto layout = new QHBoxLayout();
     layout->addWidget(chartView);
     ui->widget->setLayout(layout);
     ui->widget->layout()->deleteLater();
 }
 
-// Apply custom styles to the UI
+
 void MainWindow::style()
 {
     QString styleSheet = "QWidget#tab { background-color: #1F408E; }"
@@ -276,7 +268,7 @@ void MainWindow::style()
     ui->centralwidget->setStyleSheet(styleSheet);
 }
 
-// Clear the input fields in the UI
+
 void MainWindow::on_pushButton_clear_clicked()
 {
     ui->lineEdit_flightref->clear();
@@ -289,14 +281,14 @@ void MainWindow::on_pushButton_clear_clicked()
     ui->lineEdit_nbper->clear();
 }
 
-// Create the header bar for the table in the UI
+
 QList<QLabel *> MainWindow::createHeadBar()
 {
     QStringList labels = {"flightref", "lieudep", "lieuarr", "datedep", "datearr", "airline", "montant", "nbper"};
     QList<QLabel *> headerLabels;
-    for (int i = 0; i < labels.size(); i++)
+    for (const auto& headerLabel : labels)
     {
-        QLabel *label = new QLabel(labels[i]);
+        auto label = new QLabel(headerLabel);
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         label->setStyleSheet("QLabel {"
                              "height: 30px;"
@@ -316,7 +308,7 @@ QList<QLabel *> MainWindow::createHeadBar()
     return headerLabels;
 }
 
-// Populate the table in the UI with data from the database
+
 void MainWindow::table(QString type, QString text)
 {
     QList<Voyage> voyages = {};
@@ -331,29 +323,31 @@ void MainWindow::table(QString type, QString text)
     int rowHeight = 30;
 
     qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
-    QGridLayout *layout = new QGridLayout();
+    auto layout = new QGridLayout();
     QList<QLabel *> headerLabels = createHeadBar();
 
-    for (int i = 0; i < headerLabels.size(); i++)
+    int i = 0;
+    for (auto headerLabel : headerLabels)
     {
-        layout->addWidget(headerLabels[i], 0, i);
+        layout->addWidget(headerLabel, 0, i);
+        i++;
     }
 
-    for (int i = 0; i < voyages.size(); i++)
+    for (const auto& voyage : voyages)
     {
         QStringList voyageData = {
-            voyages[i].getFlightref(),
-            voyages[i].getLieudep(),
-            voyages[i].getLieuarr(),
-            voyages[i].getDatedep().toString("dd/MM/yyyy"),
-            voyages[i].getDatearr().toString("dd/MM/yyyy"),
-            voyages[i].getAirline(),
-            QString::number(voyages[i].getMontant()),
-            QString::number(voyages[i].getNbper())};
+            voyage.getFlightref(),
+            voyage.getLieudep(),
+            voyage.getLieuarr(),
+            voyage.getDatedep().toString("dd/MM/yyyy"),
+            voyage.getDatearr().toString("dd/MM/yyyy"),
+            voyage.getAirline(),
+            QString::number(voyage.getMontant()),
+            QString::number(voyage.getNbper())};
 
         for (int j = 0; j < 8; j++)
         {
-            QLineEdit *lineEdit = new QLineEdit(voyageData[j]);
+            auto lineEdit = new QLineEdit(voyageData[j]);
             lineEdit->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
             lineEdit->setStyleSheet("QLineEdit {"
                                     "height: 30px;"
@@ -364,27 +358,6 @@ void MainWindow::table(QString type, QString text)
             }
 
             layout->addWidget(lineEdit, i + 1, j);
-
-            /*if (j == 7)
-            {
-                QPushButton *deleteButton = new QPushButton("Delete");
-                deleteButton->setStyleSheet("QPushButton {"
-                                            "height: 30px;"
-                                            "background-color: red;"
-                                            "color: white;"
-                                            "border: none;"
-                                            "border-radius: 5px;"
-                                            "}"
-                                            "QPushButton:hover {"
-                                            "background-color: rgb(255, 0, 0, 150);"
-                                            "}");
-                connect(deleteButton, &QPushButton::clicked, [=]()
-                        {
-                        voy.supprimer(voyageData[0]);
-                        voyageData[0];
-                        table(); });
-                layout->addWidget(deleteButton, i + 1, j + 1);
-            }*/
         }
     }
 
@@ -397,19 +370,19 @@ void MainWindow::table(QString type, QString text)
     ui->scrollAreaWidgetContents->layout()->deleteLater();
 }
 
-// This function updates the average cost label based on the selected departure and arrival locations
+
 void MainWindow::on_comboBox_lieu_From_currentTextChanged(const QString &arg1)
 {
     ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
-// This function updates the average cost label based on the selected departure and arrival locations
+
 void MainWindow::on_comboBox_lieu_To_currentTextChanged(const QString &arg1)
 {
     ui->label_moyen->setText(QString::number(voy.calculateAverageCost(ui->comboBox_lieu_From->currentText(), ui->comboBox_lieu_To->currentText())));
 }
 
-// This function calculates the total profit earned from all voyages and updates the profit label
+
 void MainWindow::profit()
 {
     QSqlQuery query;
@@ -422,14 +395,14 @@ void MainWindow::profit()
     float earn = 0;
     while (it < size)
     {
-        earn += (float)query.value(0).toFloat() * query.value(1).toInt();
+        earn += query.value(0).toFloat() * (float) query.value(1).toInt();
         query.next();
         it++;
     }
     ui->label_profit->setText(QString::number(earn));
 }
 
-// This function updates the RFID label with the latest data received from the Arduino
+
 void MainWindow::update_label()
 {
     data = A.read_from_arduino();
@@ -446,24 +419,24 @@ void MainWindow::update_label()
     }
 }
 
-// This function creates a graphics scene and adds a plane and circles to it, then animates the plane's movement
+
 
 void MainWindow::graphics()
 {
-    // Create a new graphics scene and set it as the scene for the graphics view
-    QGraphicsScene *scene = new QGraphicsScene(this);
+    
+    auto scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    // Set the background color of the scene
+    
     scene->setBackgroundBrush(QBrush(QColor(5, 24, 150)));
 
-    // Add a pixmap item to the scene and set its position and opacity
+    
     QGraphicsPixmapItem *plane = scene->addPixmap(QPixmap(":/plane.png").scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation).transformed(QTransform().rotate(180)));
     plane->setPos(220, 5);
     plane->setOpacity(1);
 
-    // Add 50 circle items to the scene and set their positions
-    QGraphicsEllipseItem *circles[50];
+    
+    QVector<QGraphicsEllipseItem*> circles(50);
     int x = 10;
     for (int i = 0; i < 50; i++)
     {
@@ -472,21 +445,21 @@ void MainWindow::graphics()
         x -= 20;
     }
 
-    // Add a text item to the scene and set its position and font
+    
     QGraphicsTextItem *text = scene->addText("Tayerni", QFont("Outfit", 18));
     text->setDefaultTextColor(QColor(255, 255, 255));
     text->setPos(QPoint(-ui->graphicsView->geometry().width() / 2, -20));
 
-    // Create a timer that animates the plane item across the scene
-    QTimer *timer = new QTimer(this);
+    
+    auto timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [=]()
             {
-        QTimeLine *timeLine = new QTimeLine(5000);
-        QGraphicsItemAnimation *animation = new QGraphicsItemAnimation();
+        auto timeLine = new QTimeLine(5000);
+        auto animation = new QGraphicsItemAnimation();
         animation->setItem(plane);
         animation->setTimeLine(timeLine);
         animation->setTranslationAt(0, 220, 0);
-        animation->setTranslationAt(1, -800, 0); // Only move the plane in one direction
+        
         timeLine->start(); });
     timer->start(5000);
 }

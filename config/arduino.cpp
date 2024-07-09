@@ -1,10 +1,10 @@
 #include "arduino.h"
 
-Arduino::Arduino() : arduino_port_name(""), arduino_is_available(false), data(""), serial(new QSerialPort)
+Arduino::Arduino() : serial(new QSerialPort()), arduino_port_name(""), arduino_is_available(false), data("")
 {
 }
 
-QString Arduino::getarduino_port_name()
+QString Arduino::getarduino_port_name() const
 {
     return arduino_port_name;
 }
@@ -18,13 +18,10 @@ int Arduino::connect_arduino()
     // est connectée
     foreach (const QSerialPortInfo &serial_port_info, QSerialPortInfo::availablePorts())
     {
-        if (serial_port_info.hasVendorIdentifier() && serial_port_info.hasProductIdentifier())
+        if (serial_port_info.hasVendorIdentifier() && serial_port_info.hasProductIdentifier() && serial_port_info.vendorIdentifier() == arduino_uno_vendor_id && serial_port_info.productIdentifier() == arduino_uno_producy_id)
         {
-            if (serial_port_info.vendorIdentifier() == arduino_uno_vendor_id && serial_port_info.productIdentifier() == arduino_uno_producy_id)
-            {
-                arduino_is_available = true;
-                arduino_port_name = serial_port_info.portName();
-            }
+            arduino_is_available = true;
+            arduino_port_name = serial_port_info.portName();
         }
     }
     qDebug() << "arduino_port_name is :" << arduino_port_name;
