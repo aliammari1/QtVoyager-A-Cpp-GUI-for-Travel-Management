@@ -1,21 +1,45 @@
-MIT License
+# COMMERCIAL USE LICENSE
 
-Copyright (c) 2023 Ali Ammari
+Copyright (c) 2023-2025 Ali Ammari
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## PERMISSIONS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+You are free to:
+- Use, modify, and distribute this code for personal and non-commercial purposes
+- Study and learn from this code
+- Fork and contribute improvements
+- Use in educational settings
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## RESTRICTIONS
+
+Commercial use is NOT permitted without explicit written permission.
+
+Commercial use includes:
+- Selling or distributing this code or derived products
+- Incorporating into paid products or services
+- Using to provide commercial services
+- Using in profit-generating activities
+
+## COMMERCIAL USE REQUEST
+
+For commercial use, contact: ammari.ali.0001@gmail.com
+
+Subject: "Commercial Use Request - QtVoyager"
+
+Include:
+- Your name and organization
+- Description of intended use
+- Implementation timeline
+
+## INTELLECTUAL PROPERTY NOTICE
+
+This project uses third-party assets and libraries. The author does NOT own these assets. Each component retains its original license and copyright.
+
+Users are responsible for:
+- Reviewing all third-party licenses
+- Ensuring compliance
+- Obtaining separate licenses for commercial use of third-party components if required
+
+## DISCLAIMER
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND.
